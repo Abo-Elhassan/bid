@@ -6,7 +6,7 @@ import 'package:bid_app/app/data/models/responses/login_response.dart';
 import 'package:bid_app/app/data/models/responses/widget_data_response.dart';
 import 'package:bid_app/app/data/providers/weather_forecast_provider.dart';
 import 'package:bid_app/app/data/providers/widget_data_provider.dart';
-import 'package:bid_app/shared/helpers.dart';
+import 'package:bid_app/app/data/utilities/helpers.dart';
 import 'package:bid_app/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

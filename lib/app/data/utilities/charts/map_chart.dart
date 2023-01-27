@@ -1,5 +1,5 @@
 import 'package:bid_app/app/data/models/responses/filter_data_response.dart';
-import 'package:bid_app/shared/helpers.dart';
+import 'package:bid_app/app/data/utilities/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:math' as math;
@@ -139,8 +139,11 @@ class _MapChartState extends State<MapChart> {
                         ),
                       ],
                     );
-                  } else {
+                  } else if (snapshot.connectionState ==
+                      ConnectionState.waiting) {
                     return Helpers.loadingIndicator();
+                  } else {
+                    return Text("No Data Found");
                   }
                 }),
           ),

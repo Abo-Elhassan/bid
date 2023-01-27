@@ -1,3 +1,4 @@
+import 'package:bid_app/app/data/utilities/charts/noi.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -8,15 +9,34 @@ class NatureOfInvolvementView extends GetView<NatureOfInvolvementController> {
   const NatureOfInvolvementView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final mediaQuery = MediaQuery.of(context);
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('NatureOfInvolvementView'),
-        centerTitle: true,
+        backgroundColor: Colors.white,
       ),
-      body: Center(
-        child: Text(
-          'NatureOfInvolvementView is working',
-          style: TextStyle(fontSize: 20),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "NATURE OF INVOLVEMENT",
+              style: TextStyle(
+                color: theme.colorScheme.primary,
+                fontFamily: 'Pilat Heavy',
+                fontSize: 16,
+              ),
+            ),
+            controller.buildGredientLine(
+              mediaQuery,
+              theme,
+            ),
+            NatureOfInvolvement(
+              controller.noiData,
+            ),
+          ],
         ),
       ),
     );

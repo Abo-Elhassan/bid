@@ -15,6 +15,8 @@ abstract class Routes {
   static const CAPACITY = _Paths.CAPACITY;
   static const DEVELOPEMENT = _Paths.DEVELOPEMENT;
   static const NATURE_OF_INVOLVEMENT = _Paths.NATURE_OF_INVOLVEMENT;
+  static const ERROR = _Paths.ERROR;
+  static const SPLASH = _Paths.SPLASH;
 }
 
 abstract class _Paths {
@@ -31,4 +33,6 @@ abstract class _Paths {
   static const CAPACITY = '/capacity';
   static const DEVELOPEMENT = '/developement';
   static const NATURE_OF_INVOLVEMENT = '/nature-of-involvement';
+  static const ERROR = '/error';
+  static const SPLASH = '/splash';
 }

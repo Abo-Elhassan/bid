@@ -1,4 +1,4 @@
-import 'package:bid_app/app/data/utilities/charts/bid_chart_without_filter.dart';
+import 'package:bid_app/app/data/utilities/charts/bid_chart.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -14,7 +14,7 @@ class DevelopementView extends GetView<DevelopementController> {
         backgroundColor: Colors.white,
       ),
       backgroundColor: Colors.white,
-      body: BIDChartWithoutFilter(
+      body: BIDChart(
         controller.bidWidgetDetails,
         controller.filterData,
         "DEVELOPEMENT",

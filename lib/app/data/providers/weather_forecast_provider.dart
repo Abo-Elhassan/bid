@@ -92,15 +92,23 @@ class WeatherForecastProvider extends BidProvider {
       var body = request.toJson();
       final response =
           await post('/WeatherForecast/GetWeatherForecastDetails', body);
-      var filterDataResponse = WeatherForecastResponse.fromJson(response.body);
-      // if (response.body != null) {
-      //  var filterDataResponse = WeatherForecastResponse.fromJson(response.body);
-      // }
 
-      return filterDataResponse;
+      late WeatherForecastResponse weatherForecastResponse =
+          WeatherForecastResponse();
+      if (response.statusCode == 401) {
+        weatherForecastResponse.statusCode = 401;
+        return weatherForecastResponse;
+      } else if (response.statusCode == 500) {
+        weatherForecastResponse.statusCode = 500;
+        return weatherForecastResponse;
+      }
+      if (response.body != null) {
+        weatherForecastResponse =
+            WeatherForecastResponse.fromJson(response.body);
+      }
+
+      return weatherForecastResponse;
     } catch (e) {
-      print('from WeatherForecastProvider');
-      print(e);
       rethrow;
     }
   }

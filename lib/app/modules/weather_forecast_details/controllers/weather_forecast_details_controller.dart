@@ -4,7 +4,7 @@ import 'package:bid_app/app/data/models/responses/filter_data_response.dart';
 import 'package:bid_app/app/data/models/responses/weather_forecast_response.dart';
 import 'package:bid_app/app/data/providers/weather_forecast_provider.dart';
 import 'package:bid_app/app/data/providers/widget_data_provider.dart';
-import 'package:bid_app/shared/helpers.dart';
+import 'package:bid_app/app/data/utilities/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';

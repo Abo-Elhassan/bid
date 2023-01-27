@@ -6,15 +6,13 @@ import 'package:bid_app/app/data/models/responses/filter_data_response.dart';
 import 'package:bid_app/app/data/models/responses/widget_data_response.dart';
 
 import 'package:bid_app/app/data/providers/widget_data_provider.dart';
+import 'package:bid_app/app/data/utilities/charts/filtered_bid_chart_view.dart';
 import 'package:bid_app/app/data/utilities/charts/bid_chart_view.dart';
-import 'package:bid_app/app/data/utilities/charts/bid_chart_without_filter.dart';
 
-import 'package:bid_app/app/data/utilities/charts/bid_chart.dart';
-import 'package:bid_app/app/data/utilities/charts/bid_chart_without_filter_view.dart';
+import 'package:bid_app/app/data/utilities/charts/noi.dart';
+import 'package:bid_app/app/data/utilities/charts/noi_view.dart';
 
-import 'package:bid_app/app/data/utilities/charts/nature_of_involvement.dart';
-
-import 'package:bid_app/shared/helpers.dart';
+import 'package:bid_app/app/data/utilities/helpers.dart';
 import 'package:bid_app/app/data/utilities/charts/map_chart.dart';
 import 'package:bid_app/app/data/utilities/side_menu.dart';
 
@@ -37,34 +35,173 @@ class _HomeContentState extends State<HomeContent> {
   late FilterDataResponse filterData = FilterDataResponse();
   StringBuffer selectedRegions = StringBuffer();
   bool isLoading = false;
+  bool isRegionChanged = false;
   bool isDataUpdated = false;
   bool isRegionFilterVisible = false;
   bool isCountryFilterVisible = false;
   bool isPortFilterVisible = false;
   bool isTerminalFilterVisible = false;
   bool isOperatorFilterVisible = false;
+  bool isFilterOpened = false;
 
   @override
   void initState() {
     super.initState();
-    fetchData();
+    initData();
   }
 
   void getSelectedRegion() {
     selectedRegions.clear();
     for (var region in filterData.regionList!.where((reg) => reg.isSelected)) {
       if (region ==
-          filterData.regionList!.where((reg) => reg.isSelected).toList()[
-              filterData.regionList!.where((reg) => reg.isSelected).length -
-                  1]) {
-        selectedRegions.write('${region.regionCode} ');
+          filterData.regionList!.where((reg) => reg.isSelected).toList().last) {
+        setState(() {
+          selectedRegions.write('${region.regionCode} ');
+        });
       } else {
-        selectedRegions.write('${region.regionCode}, ');
+        setState(() {
+          selectedRegions.write('${region.regionCode}, ');
+        });
       }
     }
   }
 
-  void fetchData() async {
+  void resetFilter() {
+    setState(() {
+      filterData.regionList?.forEach((region) {
+        region.isSelected = true;
+        region.isFitlerSelected = false;
+      });
+      filterData.countryList?.forEach((country) {
+        country.isSelected = true;
+        country.isFitlerSelected = false;
+      });
+      filterData.portList?.forEach((port) {
+        port.isSelected = true;
+        port.isFitlerSelected = false;
+      });
+      filterData.terminalList?.forEach((terminal) {
+        terminal.isSelected = true;
+        terminal.isFitlerSelected = false;
+      });
+      filterData.operatorList?.forEach((operator) {
+        operator.isSelected = true;
+        operator.isFitlerSelected = false;
+      });
+    });
+  }
+
+  void updateCountryFilter() {
+    for (var country in filterData.countryList!) {
+      if (filterData.regionList!.any((reg) =>
+          reg.isFitlerSelected && reg.regionUno == country.regionUno)) {
+        country.isRegionSelected = true;
+        country.isFitlerSelected = true;
+        country.isSelected = true;
+      } else {
+        country.isRegionSelected = false;
+        country.isFitlerSelected = false;
+        country.isSelected = false;
+      }
+    }
+  }
+
+  void updatePortFilter() {
+    for (var port in filterData.portList!) {
+      if (filterData.countryList!.any(
+          (con) => con.isFitlerSelected && con.countryUno == port.countryUno)) {
+        port.isCountrySelected = true;
+        port.isFitlerSelected = true;
+        port.isSelected = true;
+      } else {
+        port.isCountrySelected = false;
+        port.isFitlerSelected = false;
+        port.isSelected = false;
+      }
+    }
+  }
+
+  void updateTerminalAndOperatorFilters() {
+    for (var terminal in filterData.terminalList!) {
+      if (filterData.portList!.any((port) =>
+          port.isFitlerSelected && port.portUno == terminal.portUno)) {
+        terminal.isPortSelected = true;
+        terminal.isFitlerSelected = true;
+        terminal.isSelected = true;
+      } else {
+        terminal.isPortSelected = false;
+        terminal.isFitlerSelected = false;
+        terminal.isSelected = false;
+      }
+    }
+
+    for (var operator in filterData.operatorList!) {
+      if (filterData.portList!.any((port) =>
+          port.isFitlerSelected && port.portUno == operator.portUno)) {
+        setState(
+          () {
+            operator.isPortSelected = true;
+            operator.isFitlerSelected = true;
+            operator.isSelected = true;
+          },
+        );
+      } else {
+        setState(
+          () {
+            operator.isPortSelected = false;
+            operator.isFitlerSelected = false;
+            operator.isSelected = false;
+          },
+        );
+      }
+    }
+  }
+
+  void updateFilterOutput() {
+    setState(() {
+      filterData.regionList?.forEach((region) {
+        if (region.isFitlerSelected) {
+          region.isSelected = true;
+        } else {
+          region.isSelected = false;
+        }
+      });
+
+      filterData.countryList?.forEach((country) {
+        if (country.isFitlerSelected) {
+          country.isSelected = true;
+        } else {
+          country.isSelected = false;
+        }
+      });
+
+      filterData.portList?.forEach((port) {
+        if (port.isFitlerSelected) {
+          port.isSelected = true;
+        } else {
+          port.isSelected = false;
+        }
+      });
+
+      filterData.terminalList?.forEach((terminal) {
+        if (terminal.isFitlerSelected) {
+          terminal.isSelected = true;
+        } else {
+          terminal.isSelected = false;
+        }
+      });
+
+      filterData.operatorList?.forEach((operator) {
+        if (operator.isFitlerSelected) {
+          operator.isSelected = true;
+        } else {
+          operator.isSelected = false;
+        }
+      });
+    });
+  }
+
+  void initData() async {
     setState(() {
       isLoading = true;
     });
@@ -74,7 +211,7 @@ class _HomeContentState extends State<HomeContent> {
           await getFilterData();
         }
         getSelectedRegion();
-        await getWidgetData();
+        await getWidgetData(prepareWidgetDataBody(true));
       } else {
         await Helpers.dialog(Icons.wifi_off_outlined, Colors.red,
             'Please check Your Netowork Connection');
@@ -83,6 +220,9 @@ class _HomeContentState extends State<HomeContent> {
         isLoading = false;
       });
     } catch (error) {
+      setState(() {
+        isLoading = false;
+      });
       await Helpers.dialog(Icons.error, Colors.red, 'An Error Occured!!');
     }
   }
@@ -95,11 +235,11 @@ class _HomeContentState extends State<HomeContent> {
       if (await Helpers.checkConnectivity()) {
         if (filterData.regionList!.any((reg) => reg.isSelected) &&
             filterData.countryList!.any((cont) => cont.isSelected)) {
-          getWidgetData();
+          getWidgetData(prepareWidgetDataBody(false));
           getSelectedRegion();
         } else {
-          Helpers.dialog(Icons.error, Colors.red,
-              'You have to select one country at least to get data');
+          getWidgetData(prepareWidgetDataBody(true));
+          getSelectedRegion();
           setState(() {
             isLoading = false;
           });
@@ -113,11 +253,17 @@ class _HomeContentState extends State<HomeContent> {
         isLoading = false;
       });
     } catch (error) {
+      setState(() {
+        isLoading = false;
+      });
       await Helpers.dialog(Icons.error, Colors.red, 'An Error Occured!!');
     }
   }
 
-  bool isFilterDatafetched() {
+  bool isFilterDataFetched() {
+    if (filterData.statusCode == 500) {
+      return false;
+    }
     if (filterData.regionList != null &&
         filterData.countryList != null &&
         filterData.portList != null &&
@@ -138,12 +284,11 @@ class _HomeContentState extends State<HomeContent> {
   }
 
   bool isWidgetsDataFetched() {
+    if (widgetsData.statusCode == 500) {
+      return false;
+    }
     if (widgetsData.bidWidgetDetails != null) {
-      if (widgetsData.bidWidgetDetails!.isNotEmpty) {
-        return true;
-      } else {
-        return false;
-      }
+      return true;
     } else {
       return false;
     }
@@ -167,9 +312,7 @@ class _HomeContentState extends State<HomeContent> {
     }
   }
 
-  Future<void> getWidgetData() async {
-    final widgetRequestBody = prepareWidgetDataBody();
-
+  Future<void> getWidgetData(WidgetDataRequest widgetRequestBody) async {
     widgetsData = await Get.find<WidgetDataProvider>()
         .getBIDashboardWidgetData(widgetRequestBody);
 
@@ -181,7 +324,7 @@ class _HomeContentState extends State<HomeContent> {
     }
   }
 
-  WidgetDataRequest prepareWidgetDataBody() {
+  WidgetDataRequest prepareWidgetDataBody(bool isInit) {
     if (filterData.terminalList!.isEmpty ||
         filterData.portList!.isEmpty ||
         filterData.regionList!.isEmpty ||
@@ -205,43 +348,87 @@ class _HomeContentState extends State<HomeContent> {
     var terminalUnoBody = StringBuffer();
     var operatorUnoBody = StringBuffer();
 
-    for (var region in filterData.regionList!.where((reg) => reg.isSelected)) {
-      regionUnoBody.write('${region.regionUno},');
-      if (filterData.regionList?[filterData.regionList!.length - 1] == region) {
-        regionUnoBody.write(region.regionUno);
+    if (isInit) {
+      for (var region in filterData.regionList!) {
+        if (filterData.regionList?.last == region) {
+          regionUnoBody.write(region.regionUno);
+        } else {
+          regionUnoBody.write('${region.regionUno},');
+        }
       }
-    }
 
-    for (var country
-        in filterData.countryList!.where((con) => con.isSelected)) {
-      countryUnoBody.write('${country.countryUno},');
-      if (filterData.countryList?[filterData.countryList!.length - 1] ==
-          country) {
-        countryUnoBody.write(country.countryUno);
+      for (var country in filterData.countryList!) {
+        if (filterData.countryList?.last == country) {
+          countryUnoBody.write(country.countryUno);
+        } else {
+          countryUnoBody.write('${country.countryUno},');
+        }
       }
-    }
 
-    for (var port in filterData.portList!.where((por) => por.isSelected)) {
-      portUnoBody.write('${port.portUno},');
-      if (filterData.portList?[filterData.portList!.length - 1] == port) {
-        portUnoBody.write(port.portUno);
+      for (var port in filterData.portList!) {
+        if (filterData.portList?.last == port) {
+          portUnoBody.write(port.portUno);
+        } else {
+          portUnoBody.write('${port.portUno},');
+        }
       }
-    }
 
-    for (var terminal
-        in filterData.terminalList!.where((ter) => ter.isSelected)) {
-      terminalUnoBody.write('${terminal.terminalUno},');
-      if (filterData.terminalList?[filterData.terminalList!.length - 1] ==
-          terminal) {
-        terminalUnoBody.write(terminal.terminalUno);
+      for (var terminal in filterData.terminalList!) {
+        if (filterData.terminalList?.last == terminal) {
+          terminalUnoBody.write(terminal.terminalUno);
+        } else {
+          terminalUnoBody.write('${terminal.terminalUno},');
+        }
       }
-    }
-    for (var operator
-        in filterData.operatorList!.where((op) => op.isSelected)) {
-      operatorUnoBody.write('${operator.operatorUno},');
-      if (filterData.operatorList?[filterData.operatorList!.length - 1] ==
-          operator) {
-        operatorUnoBody.write(operator.operatorUno);
+      for (var operator in filterData.operatorList!) {
+        if (filterData.operatorList?.last == operator) {
+          operatorUnoBody.write(operator.operatorUno);
+        } else {
+          operatorUnoBody.write('${operator.operatorUno},');
+        }
+      }
+    } else {
+      for (var region
+          in filterData.regionList!.where((reg) => reg.isSelected)) {
+        if (filterData.regionList?.last == region) {
+          regionUnoBody.write(region.regionUno);
+        } else {
+          regionUnoBody.write('${region.regionUno},');
+        }
+      }
+
+      for (var country
+          in filterData.countryList!.where((con) => con.isSelected)) {
+        if (filterData.countryList?.last == country) {
+          countryUnoBody.write(country.countryUno);
+        } else {
+          countryUnoBody.write('${country.countryUno},');
+        }
+      }
+
+      for (var port in filterData.portList!.where((por) => por.isSelected)) {
+        if (filterData.portList?.last == port) {
+          portUnoBody.write(port.portUno);
+        } else {
+          portUnoBody.write('${port.portUno},');
+        }
+      }
+
+      for (var terminal
+          in filterData.terminalList!.where((ter) => ter.isSelected)) {
+        if (filterData.terminalList?.last == terminal) {
+          terminalUnoBody.write(terminal.terminalUno);
+        } else {
+          terminalUnoBody.write('${terminal.terminalUno},');
+        }
+      }
+      for (var operator
+          in filterData.operatorList!.where((op) => op.isSelected)) {
+        if (filterData.operatorList?.last == operator) {
+          operatorUnoBody.write(operator.operatorUno);
+        } else {
+          operatorUnoBody.write('${operator.operatorUno},');
+        }
       }
     }
 
@@ -298,6 +485,10 @@ class _HomeContentState extends State<HomeContent> {
                             onTap: () {
                               setState(() {
                                 isRegionFilterVisible = !isRegionFilterVisible;
+                                isCountryFilterVisible = false;
+                                isPortFilterVisible = false;
+                                isTerminalFilterVisible = false;
+                                isOperatorFilterVisible = false;
                               });
                             },
                             visualDensity: VisualDensity(vertical: -4),
@@ -318,6 +509,11 @@ class _HomeContentState extends State<HomeContent> {
                               setState(() {
                                 isCountryFilterVisible =
                                     !isCountryFilterVisible;
+                                isRegionFilterVisible = false;
+                                isPortFilterVisible = false;
+                                isTerminalFilterVisible = false;
+                                isOperatorFilterVisible = false;
+                                isFilterOpened = true;
                               });
                             },
                             visualDensity: VisualDensity(vertical: -4),
@@ -337,6 +533,11 @@ class _HomeContentState extends State<HomeContent> {
                             onTap: () {
                               setState(() {
                                 isPortFilterVisible = !isPortFilterVisible;
+                                isCountryFilterVisible = false;
+                                isRegionFilterVisible = false;
+                                isTerminalFilterVisible = false;
+                                isOperatorFilterVisible = false;
+                                isFilterOpened = true;
                               });
                             },
                             visualDensity: VisualDensity(vertical: -4),
@@ -356,6 +557,11 @@ class _HomeContentState extends State<HomeContent> {
                               setState(() {
                                 isTerminalFilterVisible =
                                     !isTerminalFilterVisible;
+                                isCountryFilterVisible = false;
+                                isPortFilterVisible = false;
+                                isRegionFilterVisible = false;
+                                isOperatorFilterVisible = false;
+                                isFilterOpened = true;
                               });
                             },
                             visualDensity: VisualDensity(vertical: -4),
@@ -376,6 +582,11 @@ class _HomeContentState extends State<HomeContent> {
                               setState(() {
                                 isOperatorFilterVisible =
                                     !isOperatorFilterVisible;
+                                isCountryFilterVisible = false;
+                                isPortFilterVisible = false;
+                                isTerminalFilterVisible = false;
+                                isRegionFilterVisible = false;
+                                isFilterOpened = true;
                               });
                             },
                             visualDensity: VisualDensity(
@@ -403,19 +614,7 @@ class _HomeContentState extends State<HomeContent> {
                                 onPressed: () {
                                   setState(
                                     () {
-                                      filterData.regionList?.forEach(
-                                          (region) => region.isSelected = true);
-                                      filterData.countryList?.forEach(
-                                          (country) =>
-                                              country.isSelected = true);
-                                      filterData.portList?.forEach(
-                                          (port) => port.isSelected = true);
-                                      filterData.terminalList?.forEach(
-                                          (terminal) =>
-                                              terminal.isSelected = true);
-                                      filterData.operatorList?.forEach(
-                                          (operator) =>
-                                              operator.isSelected = true);
+                                      resetFilter();
                                     },
                                   );
                                 },
@@ -431,6 +630,14 @@ class _HomeContentState extends State<HomeContent> {
                               TextButton(
                                 onPressed: () async {
                                   setState(() {
+                                    if (filterData.regionList!.any(
+                                            (reg) => reg.isFitlerSelected) ==
+                                        false) {
+                                      resetFilter();
+                                    } else {
+                                      updateFilterOutput();
+                                    }
+
                                     refreshData();
                                   });
                                   Get.back();
@@ -459,26 +666,37 @@ class _HomeContentState extends State<HomeContent> {
     if (filterData.regionList == null) {
       return Column();
     }
+    if (filterData.regionList!.isEmpty) {
+      return Column();
+    }
 
     return Column(
       children: filterData.regionList!.map((reg) {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Checkbox(
-              checkColor: Colors.black,
-              fillColor: MaterialStateProperty.all(
-                Colors.black,
-              ),
-              value: reg.isSelected,
-              onChanged: (bool? val) {
-                setState(() {
-                  reg.isSelected = val!;
-                });
-              },
+        return ListTile(
+          contentPadding: EdgeInsets.zero,
+          horizontalTitleGap: 0,
+          leading: Checkbox(
+            checkColor: Colors.black,
+            fillColor: MaterialStateProperty.all(
+              Colors.black,
             ),
-            Text(reg.regionCode!),
-          ],
+            value: reg.isFitlerSelected,
+            onChanged: (bool? val) {
+              setState(() {
+                reg.isFitlerSelected = val!;
+                reg.isSelected = val;
+                updateCountryFilter();
+                updatePortFilter();
+                updateTerminalAndOperatorFilters();
+              });
+            },
+          ),
+          title: Text(
+            reg.regionName!,
+            style: TextStyle(
+              fontSize: 14,
+            ),
+          ),
         );
       }).toList(),
     );
@@ -488,46 +706,39 @@ class _HomeContentState extends State<HomeContent> {
     if (filterData.countryList == null || filterData.regionList == null) {
       return Column();
     }
-    for (var country in filterData.countryList!) {
-      if (filterData.regionList!
-          .any((reg) => reg.isSelected && reg.regionUno == country.regionUno)) {
-        setState(
-          () {
-            country.isRegionSelected = true;
-          },
-        );
-      } else {
-        setState(
-          () {
-            country.isRegionSelected = false;
-            country.isSelected = false;
-          },
-        );
-      }
+    if (filterData.countryList!.isEmpty || filterData.regionList!.isEmpty) {
+      return Column();
     }
 
     return Column(
       children: filterData.countryList!
-          .where((country) => filterData.regionList!.any(
-              (reg) => reg.isSelected && reg.regionUno == country.regionUno))
+          .where((country) => filterData.regionList!.any((reg) =>
+              reg.isFitlerSelected && reg.regionUno == country.regionUno))
           .map((con) {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Checkbox(
-              checkColor: Colors.black,
-              fillColor: MaterialStateProperty.all(
-                Colors.black,
-              ),
-              value: con.isSelected,
-              onChanged: (bool? val) {
-                setState(() {
-                  con.isSelected = val!;
-                });
-              },
+        return ListTile(
+          contentPadding: EdgeInsets.zero,
+          horizontalTitleGap: 0,
+          leading: Checkbox(
+            checkColor: Colors.black,
+            fillColor: MaterialStateProperty.all(
+              Colors.black,
             ),
-            Text(con.countryCode!),
-          ],
+            value: con.isFitlerSelected,
+            onChanged: (bool? val) {
+              setState(() {
+                con.isFitlerSelected = val!;
+                con.isSelected = val;
+                updatePortFilter();
+                updateTerminalAndOperatorFilters();
+              });
+            },
+          ),
+          title: Text(
+            con.countryName!,
+            style: TextStyle(
+              fontSize: 14,
+            ),
+          ),
         );
       }).toList(),
     );
@@ -537,49 +748,42 @@ class _HomeContentState extends State<HomeContent> {
     if (filterData.countryList == null || filterData.portList == null) {
       return Column();
     }
-
-    for (var port in filterData.portList!) {
-      if (filterData.countryList!
-          .any((con) => con.isSelected && con.countryUno == port.countryUno)) {
-        setState(
-          () {
-            port.isCountrySelected = true;
-          },
-        );
-      } else {
-        setState(
-          () {
-            port.isCountrySelected = false;
-            port.isSelected = false;
-          },
-        );
-      }
+    if (filterData.countryList!.isEmpty || filterData.portList!.isEmpty) {
+      return Column();
     }
+
     return Column(
       children: filterData.portList!
           .where((port) => filterData.countryList!.any((con) =>
-              con.isSelected &&
+              con.isFitlerSelected &&
               con.countryUno == port.countryUno &&
-              filterData.regionList!.any(
-                  (reg) => reg.isSelected && reg.regionUno == con.regionUno)))
+              filterData.regionList!.any((reg) =>
+                  reg.isFitlerSelected && reg.regionUno == con.regionUno)))
           .map((por) {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Checkbox(
-              checkColor: Colors.black,
-              fillColor: MaterialStateProperty.all(
-                Colors.black,
-              ),
-              value: por.isSelected,
-              onChanged: (bool? val) {
-                setState(() {
-                  por.isSelected = val!;
-                });
-              },
+        return ListTile(
+          contentPadding: EdgeInsets.zero,
+          horizontalTitleGap: 0,
+          leading: Checkbox(
+            checkColor: Colors.black,
+            fillColor: MaterialStateProperty.all(
+              Colors.black,
             ),
-            Text(por.portCode!),
-          ],
+            value: por.isFitlerSelected,
+            onChanged: (bool? val) {
+              setState(() {
+                por.isFitlerSelected = val!;
+                por.isSelected = val;
+
+                updateTerminalAndOperatorFilters();
+              });
+            },
+          ),
+          title: Text(
+            por.portName!,
+            style: TextStyle(
+              fontSize: 14,
+            ),
+          ),
         );
       }).toList(),
     );
@@ -589,81 +793,87 @@ class _HomeContentState extends State<HomeContent> {
     if (filterData.terminalList == null || filterData.portList == null) {
       return Column();
     }
-
-    for (var terminal in filterData.terminalList!) {
-      if (filterData.portList!
-          .any((port) => port.isSelected && port.portUno == terminal.portUno)) {
-        setState(
-          () {
-            terminal.isPortSelected = true;
-          },
-        );
-      } else {
-        setState(
-          () {
-            terminal.isPortSelected = false;
-            terminal.isSelected = false;
-          },
-        );
-      }
+    if (filterData.terminalList!.isEmpty || filterData.portList!.isEmpty) {
+      return Column();
     }
 
     return Column(
       children: filterData.terminalList!
           .where((terminal) => filterData.portList!.any((port) =>
-              port.isSelected &&
+              port.isFitlerSelected &&
               port.portUno == terminal.portUno &&
               filterData.countryList!.any((con) =>
-                  con.isSelected &&
+                  con.isFitlerSelected &&
                   con.countryUno == port.countryUno &&
                   filterData.regionList!.any((reg) =>
-                      reg.isSelected && reg.regionUno == con.regionUno))))
+                      reg.isFitlerSelected && reg.regionUno == con.regionUno))))
           .map((ter) {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Checkbox(
-              checkColor: Colors.black,
-              fillColor: MaterialStateProperty.all(
-                Colors.black,
-              ),
-              value: ter.isSelected,
-              onChanged: (bool? val) {
-                setState(() {
-                  ter.isSelected = val!;
-                });
-              },
+        return ListTile(
+          contentPadding: EdgeInsets.zero,
+          horizontalTitleGap: 0,
+          leading: Checkbox(
+            checkColor: Colors.black,
+            fillColor: MaterialStateProperty.all(
+              Colors.black,
             ),
-            Text(ter.terminalCode!),
-          ],
+            value: ter.isFitlerSelected,
+            onChanged: (bool? val) {
+              setState(() {
+                ter.isFitlerSelected = val!;
+                ter.isSelected = val;
+              });
+            },
+          ),
+          title: Text(
+            ter.terminalName!,
+            style: TextStyle(fontSize: 14),
+          ),
         );
       }).toList(),
     );
   }
 
   Column buildOperatorFilter(StateSetter setState) {
-    if (filterData.operatorList == null) {
+    if (filterData.operatorList == null || filterData.portList == null) {
       return Column();
     }
+    if (filterData.operatorList!.isEmpty || filterData.portList!.isEmpty) {
+      return Column();
+    }
+
     return Column(
-      children: filterData.operatorList!.map((op) {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Checkbox(
-              checkColor: Colors.black,
-              fillColor: MaterialStateProperty.all(
-                Colors.black,
-              ),
-              value: op.isSelected,
-              onChanged: (bool? val) {
-                setState(() {
-                  op.isSelected = val!;
-                });
-              },
+      children: filterData.operatorList!
+          .where((operator) => filterData.portList!.any((port) =>
+              port.isFitlerSelected &&
+              port.portUno == operator.portUno &&
+              filterData.countryList!.any((con) =>
+                  con.isFitlerSelected &&
+                  con.countryUno == port.countryUno &&
+                  filterData.regionList!.any((reg) =>
+                      reg.isFitlerSelected && reg.regionUno == con.regionUno))))
+          .map((op) {
+        return ListTile(
+          contentPadding: EdgeInsets.zero,
+          horizontalTitleGap: 0,
+          leading: Checkbox(
+            checkColor: Colors.black,
+            fillColor: MaterialStateProperty.all(
+              Colors.black,
             ),
-            Text(op.operatorCode!),
-          ],
+            value: op.isFitlerSelected,
+            onChanged: (bool? val) {
+              setState(() {
+                op.isFitlerSelected = val!;
+                op.isSelected = val;
+              });
+            },
+          ),
+          title: Text(
+            op.operatorName!,
+            style: TextStyle(
+              fontSize: 14,
+            ),
+          ),
         );
       }).toList(),
     );
@@ -708,13 +918,13 @@ class _HomeContentState extends State<HomeContent> {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          if (isFilterDatafetched() && isWidgetsDataFetched())
-            IconButton(
-              icon: const Icon(Icons.refresh),
-              onPressed: () async {
-                refreshData();
-              },
-            ),
+          //if (isFilterDataFetched() && isWidgetsDataFetched())
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () async {
+              refreshData();
+            },
+          ),
         ],
       ),
       drawer: SideMenu(Helpers.getCurrentUser().username.toString()),
@@ -745,7 +955,7 @@ class _HomeContentState extends State<HomeContent> {
                 horizontal: mediaQuery.size.width * 0.05,
                 vertical: mediaQuery.size.height * 0.01,
               ),
-              child: isFilterDatafetched() && isWidgetsDataFetched()
+              child: isFilterDataFetched() && isWidgetsDataFetched()
                   ? Column(
                       children: [
                         Row(
@@ -777,7 +987,7 @@ class _HomeContentState extends State<HomeContent> {
                               SizedBox(
                                 height: 50,
                               ),
-                              BIDChartView(
+                              FilteredBIDChartView(
                                 widgetsData.bidWidgetDetails!,
                                 "GDP",
                                 "GDP",
@@ -785,7 +995,7 @@ class _HomeContentState extends State<HomeContent> {
                               SizedBox(
                                 height: 50,
                               ),
-                              BIDChartView(
+                              FilteredBIDChartView(
                                 widgetsData.bidWidgetDetails!,
                                 "GDPGR",
                                 "GDPGR",
@@ -793,7 +1003,7 @@ class _HomeContentState extends State<HomeContent> {
                               SizedBox(
                                 height: 50,
                               ),
-                              BIDChartView(
+                              FilteredBIDChartView(
                                 widgetsData.bidWidgetDetails!,
                                 "POP",
                                 "POPULATION",
@@ -801,7 +1011,7 @@ class _HomeContentState extends State<HomeContent> {
                               SizedBox(
                                 height: 50,
                               ),
-                              BIDChartView(
+                              FilteredBIDChartView(
                                 widgetsData.bidWidgetDetails!,
                                 "VOL",
                                 "VOLUME",
@@ -809,7 +1019,7 @@ class _HomeContentState extends State<HomeContent> {
                               SizedBox(
                                 height: 50,
                               ),
-                              BIDChartWithoutFilterView(
+                              BIDChartView(
                                 widgetsData.bidWidgetDetails!,
                                 filterData,
                                 "CAPACITY",
@@ -818,7 +1028,7 @@ class _HomeContentState extends State<HomeContent> {
                               SizedBox(
                                 height: 50,
                               ),
-                              BIDChartWithoutFilterView(
+                              BIDChartView(
                                 widgetsData.bidWidgetDetails!,
                                 filterData,
                                 "DEVELOPMENT",
@@ -827,27 +1037,8 @@ class _HomeContentState extends State<HomeContent> {
                               SizedBox(
                                 height: 50,
                               ),
-                              Text(
-                                "NATURE OF INVOLVEMENT",
-                                style: TextStyle(
-                                  color: theme.colorScheme.primary,
-                                  fontFamily: 'Pilat Heavy',
-                                  fontSize: 16,
-                                ),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Container(
-                                height: 350,
-                                width: double.infinity,
-                                child: Card(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(15),
-                                    child: NatureOfInvolvement(
-                                        widgetsData.bidWidgetDetails!),
-                                  ),
-                                ),
+                              NatureOfInvlovementView(
+                                widgetsData.bidWidgetDetails!,
                               ),
                               SizedBox(
                                 height: 50,

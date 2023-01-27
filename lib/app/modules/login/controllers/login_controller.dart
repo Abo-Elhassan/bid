@@ -1,4 +1,4 @@
-import 'package:bid_app/shared/helpers.dart';
+import 'package:bid_app/app/data/utilities/helpers.dart';
 import 'package:bid_app/app/data/models/requests/filter_data_request.dart';
 import 'package:bid_app/app/data/models/requests/login_request.dart';
 import 'package:bid_app/app/data/providers/login_provider.dart';

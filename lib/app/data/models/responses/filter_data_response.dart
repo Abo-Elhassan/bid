@@ -52,11 +52,13 @@ class Region {
   late String? regionCode;
   late String? regionName;
   late bool isSelected;
+  late bool isFitlerSelected;
   Region({
     this.regionUno = 0,
     this.regionCode = "",
     this.regionName = "",
     this.isSelected = true,
+    this.isFitlerSelected = false,
   });
 
   Region.fromJson(Map<String, dynamic> json) {
@@ -64,6 +66,7 @@ class Region {
     regionCode = json['regionCode'];
     regionName = json['regionName'];
     isSelected = true;
+    isFitlerSelected = false;
   }
 }
 
@@ -73,6 +76,7 @@ class Country {
   late String? countryCode;
   late String? countryName;
   late bool isSelected;
+  late bool isFitlerSelected;
   late bool isRegionSelected;
   Country({
     this.countryUno = 0,
@@ -80,6 +84,7 @@ class Country {
     this.countryCode = "",
     this.countryName = "",
     this.isSelected = true,
+    this.isFitlerSelected = false,
     this.isRegionSelected = true,
   });
 
@@ -89,6 +94,7 @@ class Country {
     countryCode = json['countryCode'];
     countryName = json['countryName'];
     isSelected = true;
+    isFitlerSelected = false;
     isRegionSelected = true;
   }
 }
@@ -98,14 +104,18 @@ class Port {
   late int portUno;
   late String? portCode;
   late String? portName;
+  late String? locationID;
   late bool isSelected;
+  late bool isFitlerSelected;
   late bool isCountrySelected;
   Port(
       {this.countryUno = 0,
       this.portUno = 0,
       this.portCode = "",
       this.portName = "",
+      this.locationID = "",
       this.isSelected = true,
+      this.isFitlerSelected = false,
       this.isCountrySelected = true});
 
   Port.fromJson(Map<String, dynamic> json) {
@@ -113,7 +123,9 @@ class Port {
     portUno = json['portUno'];
     portCode = json['portCode'];
     portName = json['portName'];
+    locationID = json['locationID'];
     isSelected = true;
+    isFitlerSelected = false;
     isCountrySelected = true;
   }
 }
@@ -125,6 +137,7 @@ class Terminal {
   late String? terminalName;
   late String? locationID;
   late bool isSelected;
+  late bool isFitlerSelected;
   late bool isPortSelected;
   Terminal({
     this.portUno = 0,
@@ -133,6 +146,7 @@ class Terminal {
     this.terminalName = "",
     this.locationID = "",
     this.isSelected = true,
+    this.isFitlerSelected = false,
     this.isPortSelected = true,
   });
 
@@ -143,25 +157,36 @@ class Terminal {
     terminalName = json['terminalName'];
     locationID = json['locationID'];
     isSelected = true;
+    isFitlerSelected = false;
     isPortSelected = true;
   }
 }
 
 class Operator {
+  late int portUno;
   late int operatorUno;
   late String? operatorCode;
   late String? operatorName;
   late bool isSelected;
-  Operator(
-      {this.operatorUno = 0,
-      this.operatorCode = "",
-      this.operatorName = "",
-      this.isSelected = true});
+  late bool isFitlerSelected;
+  late bool isPortSelected;
+  Operator({
+    this.portUno = 0,
+    this.operatorUno = 0,
+    this.operatorCode = "",
+    this.operatorName = "",
+    this.isSelected = true,
+    this.isFitlerSelected = false,
+    this.isPortSelected = true,
+  });
 
   Operator.fromJson(Map<String, dynamic> json) {
+    portUno = json['portUno'];
     operatorUno = json['operatorUno'];
     operatorCode = json['operatorCode'];
     operatorName = json['operatorName'];
     isSelected = true;
+    isFitlerSelected = false;
+    isPortSelected = true;
   }
 }

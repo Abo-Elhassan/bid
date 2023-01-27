@@ -3,6 +3,7 @@ class LoginResponse {
   late int roleType;
   late int userUno;
   late int defaultTerminalUno;
+  late int defaultPortUno;
   late int statusCode;
   late String? message;
   late String? username = "";
@@ -12,6 +13,7 @@ class LoginResponse {
       this.roleType = 0,
       this.userUno = 0,
       this.defaultTerminalUno = 0,
+      this.defaultPortUno = 0,
       this.statusCode = 0,
       this.message = "",
       this.username = ""});
@@ -22,6 +24,7 @@ class LoginResponse {
       "roleType": roleType,
       "userUno": userUno,
       "defaultTerminalUno": defaultTerminalUno,
+      "defaultPortUno": defaultPortUno,
       "statusCode": statusCode,
       "message": message,
       "username": username,
@@ -33,6 +36,7 @@ class LoginResponse {
     roleType = json['roleType'];
     userUno = json['userUno'];
     defaultTerminalUno = json['defaultTerminalUno'];
+    defaultPortUno = json['defaultPortUno'];
     statusCode = json['statusCode'];
     message = json['message'];
     username = json['username'];

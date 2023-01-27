@@ -1,31 +1,33 @@
-import 'package:bid_app/app/data/models/responses/filter_data_response.dart';
 import 'package:bid_app/app/data/models/responses/widget_data_response.dart';
+import 'package:darq/darq.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-class BIDChart extends StatefulWidget {
+class FilteredBIDChart extends StatefulWidget {
   final List<BidWidgetDetails> bidWidgetDetails;
-  final FilterDataResponse filterData;
   final String chartType;
   final String chartTitle;
 
-  BIDChart(
+  FilteredBIDChart(
     this.bidWidgetDetails,
-    this.filterData,
     this.chartType,
     this.chartTitle,
   );
 
   @override
-  BIDChartState createState() => BIDChartState();
+  FilteredBIDChartState createState() => FilteredBIDChartState();
 }
 
-class BIDChartState extends State<BIDChart> {
+class FilteredBIDChartState extends State<FilteredBIDChart> {
   late List<_ChartData> data;
   late ZoomPanBehavior _zoomPanBehavior;
   late TooltipBehavior _tooltip;
   late List<BidWidgetDetails> widgetDetails = <BidWidgetDetails>[];
+  final yearList = <int>[];
+
+  late List<BidWidgetDetails> showedWidgets = widgetDetails;
 
   late BidWidgetDetails maxItem = BidWidgetDetails();
   late BidWidgetDetails minItem = BidWidgetDetails();
@@ -41,56 +43,35 @@ class BIDChartState extends State<BIDChart> {
         .toList();
 
     if (widgetDetails.isNotEmpty) {
+      widgetDetails.distinct(((wid) => wid.biYear)).toList().forEach((item) {
+        yearList.add(item.biYear);
+      });
+
+      showedWidgets =
+          widgetDetails.where((wid) => wid.biYear == yearList[0]).toList();
+
       maxItem = widgetDetails.reduce((value, element) =>
           value.biValue > element.biValue ? value : element);
       minItem = widgetDetails.reduce((value, element) =>
           value.biValue < element.biValue ? value : element);
       minVal = double.parse(minItem.biValue.toString());
       maxVal = double.parse(maxItem.biValue.toString());
-
-      _tooltip = TooltipBehavior(enable: true);
-      _zoomPanBehavior = ZoomPanBehavior(
-          // Enables pinch zooming
-          // enablePinching: true,
-          );
-      data = [];
-      for (var wid in widgetDetails) {
-        if (widget.filterData.terminalList!
-            .any((terminal) => terminal.isSelected)) {
-          data.add(
-            _ChartData(wid.terminalCode!.toUpperCase(), wid.biValue),
-          );
-        } else if (widget.filterData.portList!.any((port) => port.isSelected)) {
-          data.add(
-            _ChartData(wid.portCode!.toUpperCase(), wid.biValue),
-          );
-        } else {
-          data.add(
-            _ChartData(wid.countryCode!.toUpperCase(), wid.biValue),
-          );
-        }
-      }
     }
+
+    _tooltip = TooltipBehavior(enable: true);
+    _zoomPanBehavior = ZoomPanBehavior(
+        // Enables pinch zooming
+        // enablePinching: true,
+        );
+
+    data = <_ChartData>[];
+    for (var wid in showedWidgets) {
+      data.add(
+        _ChartData(wid.countryCode!.toUpperCase(), wid.biValue),
+      );
+    }
+
     super.initState();
-  }
-
-  NumericAxis buildYAxis() {
-    if (widgetDetails.length == 1) {
-      return NumericAxis(
-          numberFormat: NumberFormat.compact(),
-          decimalPlaces: 2,
-          minimum: minVal - 0.5 * minVal > 0 ? minVal - 0.5 * minVal : 0,
-          maximum: minVal * 3,
-          interval: minVal + 0.5 * minVal / 2);
-    } else {
-      return NumericAxis(
-          numberFormat: NumberFormat.compact(),
-          decimalPlaces: 2,
-          minimum:
-              minVal - (maxVal - minVal) > 0 ? minVal - (maxVal - minVal) : 0,
-          maximum: maxVal + (maxVal - minVal),
-          interval: (maxVal - minVal) / 2);
-    }
   }
 
   Widget buildGredientLine(MediaQueryData mediaQuery, ThemeData theme) {
@@ -138,7 +119,13 @@ class BIDChartState extends State<BIDChart> {
               fontWeight: FontWeight.bold),
           maximumLabels: widgetDetails.length,
         ),
-        primaryYAxis: buildYAxis(),
+        primaryYAxis: NumericAxis(
+            numberFormat: NumberFormat.compact(),
+            decimalPlaces: 2,
+            minimum:
+                minVal - (maxVal - minVal) > 0 ? minVal - (maxVal - minVal) : 0,
+            maximum: maxVal + (maxVal - minVal),
+            interval: (maxVal - minVal) / 2),
         tooltipBehavior: _tooltip,
         series: <ChartSeries<_ChartData, String>>[
           ColumnSeries<_ChartData, String>(
@@ -175,9 +162,55 @@ class BIDChartState extends State<BIDChart> {
               style: TextStyle(
                 color: theme.colorScheme.primary,
                 fontFamily: 'Pilat Heavy',
-                fontSize: 16,
+                fontSize: 20,
               ),
             ),
+            widgetDetails.isNotEmpty
+                ? DropdownButton(
+                    dropdownColor: Colors.white,
+                    value: showedWidgets[0].biYear,
+                    icon: Icon(
+                      Icons.calendar_month,
+                      color: Color.fromRGBO(50, 48, 190, 1),
+                    ),
+                    items: widgetDetails
+                        .distinct(((wid) => wid.biYear))
+                        .toList()
+                        .map<DropdownMenuItem<int>>((wid) {
+                      return DropdownMenuItem(
+                        value: wid.biYear,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: Text(
+                            wid.biYearDisplay.toString(),
+                            style: TextStyle(
+                              color: Color.fromRGBO(50, 48, 190, 1),
+                              fontFamily: 'Pilat Heavy',
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (newValue) {
+                      setState(() {
+                        showedWidgets = widgetDetails
+                            .where((wid) => wid.biYear == newValue)
+                            .toList();
+
+                        data.clear();
+
+                        for (var wid in showedWidgets) {
+                          data.add(
+                            _ChartData(
+                                wid.countryCode!.toUpperCase(), wid.biValue),
+                          );
+                        }
+                      });
+                    },
+                  )
+                : SizedBox(),
           ],
         ),
         buildGredientLine(

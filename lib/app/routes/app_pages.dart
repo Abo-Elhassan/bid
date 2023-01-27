@@ -8,6 +8,8 @@ import '../modules/capacity/bindings/capacity_binding.dart';
 import '../modules/capacity/views/capacity_view.dart';
 import '../modules/developement/bindings/developement_binding.dart';
 import '../modules/developement/views/developement_view.dart';
+import '../modules/error/bindings/error_binding.dart';
+import '../modules/error/views/error_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/landing/bindings/landing_binding.dart';
@@ -18,6 +20,8 @@ import '../modules/nature_of_involvement/bindings/nature_of_involvement_binding.
 import '../modules/nature_of_involvement/views/nature_of_involvement_view.dart';
 import '../modules/population/bindings/population_binding.dart';
 import '../modules/population/views/population_view.dart';
+import '../modules/splash/bindings/splash_binding.dart';
+import '../modules/splash/views/splash_view.dart';
 import '../modules/volume/bindings/volume_binding.dart';
 import '../modules/volume/views/volume_view.dart';
 import '../modules/weather_forecast/bindings/weather_forecast_binding.dart';
@@ -30,7 +34,7 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.LANDING;
+  static const INITIAL = Routes.SPLASH;
 
   static final routes = [
     GetPage(
@@ -92,6 +96,16 @@ class AppPages {
       name: _Paths.NATURE_OF_INVOLVEMENT,
       page: () => const NatureOfInvolvementView(),
       binding: NatureOfInvolvementBinding(),
+    ),
+    GetPage(
+      name: _Paths.ERROR,
+      page: () => const ErrorView(),
+      binding: ErrorBinding(),
+    ),
+    GetPage(
+      name: _Paths.SPLASH,
+      page: () => SplashView(),
+      binding: SplashBinding(),
     ),
   ];
 }

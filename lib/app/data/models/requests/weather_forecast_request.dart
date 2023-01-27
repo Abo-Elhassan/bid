@@ -1,13 +1,13 @@
 class WeatherForecastRequest {
   late String locationID;
-  late int terminalUno;
+  late int PortUno;
   late int userUno;
   late int companyUno;
   late int condition;
 
   WeatherForecastRequest({
     required this.locationID,
-    required this.terminalUno,
+    required this.PortUno,
     required this.userUno,
     required this.companyUno,
     required this.condition,
@@ -16,7 +16,7 @@ class WeatherForecastRequest {
   Map<String, dynamic> toJson() {
     return {
       "locationID": locationID,
-      "terminalUno": terminalUno,
+      "PortUno": PortUno,
       "userUno": userUno,
       "companyUno": companyUno,
       "condition": condition

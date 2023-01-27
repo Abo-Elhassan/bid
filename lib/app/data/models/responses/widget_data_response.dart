@@ -34,7 +34,9 @@ class BidWidgetDetails {
   late String? biType;
   late int biYear;
   late String? biYearDisplay;
-  late int biValue;
+  late int xValue;
+  late double biValue;
+  late String? biUnit;
   late String? natureOfInvolvement;
 
   BidWidgetDetails({
@@ -52,7 +54,9 @@ class BidWidgetDetails {
     this.biType = "",
     this.biYear = 0,
     this.biYearDisplay = "",
+    this.xValue = 0,
     this.biValue = 0,
+    this.biUnit = "",
     this.natureOfInvolvement = "",
   });
 
@@ -72,7 +76,9 @@ class BidWidgetDetails {
     biType = json['biType'];
     biYear = json['biYear'];
     biYearDisplay = json['biYearDisplay'];
+    xValue = json['xValue'];
     biValue = json['biValue'];
+    biUnit = json['biUnit'];
     natureOfInvolvement = json['natureOfInvolvement'];
   }
 }

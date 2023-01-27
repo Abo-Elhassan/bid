@@ -38,7 +38,11 @@ class WidgetDataProvider extends BidProvider {
         widgetDataResponse.statusCode = 500;
         return widgetDataResponse;
       }
-      widgetDataResponse = WidgetDataResponse.fromJson(response.body);
+
+      if (response.body != null) {
+        widgetDataResponse = WidgetDataResponse.fromJson(response.body);
+      }
+
       return widgetDataResponse;
     } catch (e) {
       rethrow;

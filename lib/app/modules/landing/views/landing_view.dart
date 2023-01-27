@@ -1,3 +1,4 @@
+import 'package:bid_app/app/data/utilities/helpers.dart';
 import 'package:bid_app/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 
@@ -7,6 +8,7 @@ import '../controllers/landing_controller.dart';
 
 class LandingView extends GetView<LandingController> {
   const LandingView({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -46,20 +48,20 @@ class LandingView extends GetView<LandingController> {
                 height: mediaQuery.size.height * 0.01,
               ),
               Text(
-                'BUISNESS INSIGHTS & WEATHER FORECAST',
+                'DP INSIGHTS & WEATHER FORECAST',
                 style: TextStyle(
                   color: Colors.white,
                   fontFamily: 'Pilat Heavy',
-                  fontSize: mediaQuery.size.width * 0.03,
+                  fontSize: mediaQuery.size.width * 0.035,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
-                '  DASHBOARD',
+                ' ',
                 style: TextStyle(
                   color: Colors.white,
                   fontFamily: 'Pilat Heavy',
-                  fontSize: mediaQuery.size.width * 0.03,
+                  fontSize: mediaQuery.size.width * 0.035,
                   fontWeight: FontWeight.bold,
                 ),
               ),
