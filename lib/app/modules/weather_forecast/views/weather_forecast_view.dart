@@ -10,8 +10,53 @@ import '../controllers/weather_forecast_controller.dart';
 
 class WeatherForecastView extends GetView<WeatherForecastController> {
   const WeatherForecastView({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: WeatherForecastContent());
+    return Scaffold(
+        appBar: AppBar(
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: () {
+                controller.fetchData(false,
+                    portName: controller.showedPort.value!.portName);
+              },
+            ),
+          ],
+        ),
+        drawer: SideMenu(Helpers.getCurrentUser().username.toString()),
+        body: controller.obx(
+          (state) {
+            return RefreshIndicator(
+                onRefresh: () async {
+                  controller.fetchData(false,
+                      portName: controller.showedPort.value?.portName);
+                },
+                child: WeatherForecastContent(
+                    weatherForecastDetails:
+                        controller.weatherForecastDetails.value,
+                    portList: controller.portList,
+                    showedPort: controller.showedPort.value!,
+                    updateData: controller.fetchData));
+          },
+          onLoading: Center(
+            child: Helpers.loadingIndicator(),
+          ),
+          onEmpty: Center(
+            child: Text(
+              "No Data Found",
+              textScaleFactor: 1,
+              textAlign: TextAlign.center,
+            ),
+          ),
+          onError: (error) => Center(
+            child: Text(
+              error.toString(),
+              textAlign: TextAlign.center,
+              style: TextStyle(fontFamily: "Pilat Heavy", fontSize: 22),
+            ),
+          ),
+        ));
   }
 }

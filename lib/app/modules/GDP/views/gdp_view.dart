@@ -15,9 +15,15 @@ class GdpView extends GetView<GdpController> {
       ),
       backgroundColor: Colors.white,
       body: FilteredBIDChart(
-        controller.bidWidgetDetails,
-        "GDP",
-        "GDP",
+        widgetDetails: controller.widgetDetails,
+        chartType: controller.chartType,
+        chartTitle: controller.chartTitle,
+        showedWidgets: controller.showedWidgets,
+        data: controller.data,
+        yearList: controller.yearList,
+        minVal: controller.minVal,
+        maxVal: controller.maxVal,
+        interval: controller.interval,
       ),
     );
   }

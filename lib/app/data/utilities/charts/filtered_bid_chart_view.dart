@@ -22,7 +22,7 @@ class FilteredBIDChartView extends StatefulWidget {
 }
 
 class FilteredBIDChartViewState extends State<FilteredBIDChartView> {
-  late List<_ChartData> data;
+  late List<ChartData> data = <ChartData>[];
   late ZoomPanBehavior _zoomPanBehavior;
   late TooltipBehavior _tooltip;
   late List<BidWidgetDetails> widgetDetails = <BidWidgetDetails>[];
@@ -35,15 +35,109 @@ class FilteredBIDChartViewState extends State<FilteredBIDChartView> {
   late double minVal = 0;
   late double maxVal = 0;
   late double? interval;
+  late int maxXValue = 0;
+  late String xValue = "";
+
+  void setChartXvalue() {
+    data = <ChartData>[];
+    if (showedWidgets.isNotEmpty) {
+      switch (maxXValue) {
+        case 2:
+          for (var wid in showedWidgets) {
+            data.add(
+              ChartData(wid.countryCode!.toUpperCase(), wid.biValue),
+            );
+          }
+          break;
+        case 3:
+          for (var wid in showedWidgets) {
+            data.add(
+              ChartData(wid.portCode!.toUpperCase(), wid.biValue),
+            );
+          }
+          break;
+        case 4:
+          for (var wid in showedWidgets) {
+            data.add(
+              ChartData(wid.terminalCode!.toUpperCase(), wid.biValue),
+            );
+          }
+          break;
+        case 5:
+          for (var wid in showedWidgets) {
+            data.add(
+              ChartData(wid.operatorCode!.toUpperCase(), wid.biValue),
+            );
+          }
+          break;
+        default:
+          for (var wid in showedWidgets) {
+            data.add(
+              ChartData(wid.countryCode!.toUpperCase(), wid.biValue),
+            );
+          }
+          break;
+      }
+    }
+  }
+
+  void prepareYAxis() {
+    if (widgetDetails.isNotEmpty) {
+      maxItem = widgetDetails.reduce((value, element) =>
+          value.biValue > element.biValue ? value : element);
+      minItem = widgetDetails.reduce((value, element) =>
+          value.biValue < element.biValue ? value : element);
+      minVal = double.parse(minItem.biValue.toString());
+      maxVal = double.parse(maxItem.biValue.toString());
+
+      minVal = minVal > 0 ? minVal - 0.5 * minVal : minVal + (0.5 * minVal);
+
+      maxVal = maxVal + 0.75 * maxVal;
+      interval = ((maxVal - minVal) / 2);
+    }
+  }
+
+  void getWidgetDetails() {
+    switch (widget.chartType) {
+      case "GDP":
+      case "GDPGR":
+      case "POP":
+        widgetDetails = widget.bidWidgetDetails
+            .where(
+              (wid) =>
+                  wid.biType?.toUpperCase() == widget.chartType.toUpperCase() &&
+                  wid.xValue == 2,
+            )
+            .toList();
+        break;
+
+      case "VOL":
+        widgetDetails = widget.bidWidgetDetails
+            .where((wid) =>
+                wid.biType?.toUpperCase() == widget.chartType.toUpperCase())
+            .toList();
+        if (widgetDetails.isNotEmpty) {
+          maxXValue = widgetDetails
+              .reduce((value, element) =>
+                  value.xValue > element.xValue ? value : element)
+              .xValue;
+
+          widgetDetails = widget.bidWidgetDetails
+              .where((wid) =>
+                  wid.biType?.toUpperCase() == widget.chartType.toUpperCase() &&
+                  wid.xValue == maxXValue)
+              .toList();
+        }
+
+        break;
+
+      default:
+    }
+  }
 
   @override
   void initState() {
-    widgetDetails = widget.bidWidgetDetails
-        .where(
-          (wid) => wid.biType?.toUpperCase() == widget.chartType.toUpperCase(),
-        )
-        .toList();
-
+    getWidgetDetails();
     if (widgetDetails.isNotEmpty) {
       widgetDetails.distinct(((wid) => wid.biYear)).toList().forEach((item) {
         yearList.add(item.biYear);
@@ -51,28 +145,15 @@ class FilteredBIDChartViewState extends State<FilteredBIDChartView> {
 
       showedWidgets =
           widgetDetails.where((wid) => wid.biYear == yearList[0]).toList();
-
-      maxItem = widgetDetails.reduce((value, element) =>
-          value.biValue > element.biValue ? value : element);
-      minItem = widgetDetails.reduce((value, element) =>
-          value.biValue < element.biValue ? value : element);
-      minVal = double.parse(minItem.biValue.toString());
-      maxVal = double.parse(maxItem.biValue.toString());
-      interval =
-          ((maxVal - minVal) / 2) > 0.01 ? ((maxVal - minVal) / 2) : 0.01;
+      setChartXvalue();
+      prepareYAxis();
 
       _tooltip = TooltipBehavior(enable: true);
       _zoomPanBehavior = ZoomPanBehavior(
-          // Enables pinch zooming
-          // enablePinching: true,
-          );
-
-      data = <_ChartData>[];
-      for (var wid in showedWidgets) {
-        data.add(
-          _ChartData(wid.countryCode!.toUpperCase(), wid.biValue),
-        );
-      }
+        // Enables pinch zooming
+        // enablePinching: true,
+        enablePanning: true,
+      );
     }
     super.initState();
   }
@@ -82,47 +163,47 @@ class FilteredBIDChartViewState extends State<FilteredBIDChartView> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: <Widget>[
           Expanded(
-            child: SfCartesianChart(
-                isTransposed: false,
-                margin: EdgeInsets.only(bottom: 5),
-                zoomPanBehavior: _zoomPanBehavior,
-                primaryXAxis: CategoryAxis(
-                  maximumLabels: widgetDetails.length,
-                  labelRotation: -45,
-                ),
-                primaryYAxis: NumericAxis(
-                  numberFormat: NumberFormat.compact(),
-                  decimalPlaces: 2,
-                  minimum: minVal - (maxVal - minVal) > 0
-                      ? minVal - (maxVal - minVal)
-                      : 0,
-                  maximum: maxVal + (maxVal - minVal),
-                  interval: interval,
-                ),
-                tooltipBehavior: _tooltip,
-                series: <ChartSeries<_ChartData, String>>[
-                  ColumnSeries<_ChartData, String>(
-                      dataLabelSettings: DataLabelSettings(
-                        alignment: ChartAlignment.far,
-                        labelAlignment: ChartDataLabelAlignment.outer,
-                        labelPosition: ChartDataLabelPosition.outside,
-                        angle: -90,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: SfCartesianChart(
+                  enableAxisAnimation: true,
+                  isTransposed: true,
+                  zoomPanBehavior: _zoomPanBehavior,
+                  primaryXAxis: CategoryAxis(
+                    autoScrollingDelta: 5,
+                    interval: 1,
+                  ),
+                  primaryYAxis: NumericAxis(
+                    edgeLabelPlacement: EdgeLabelPlacement.shift,
+                    decimalPlaces: 0,
+                    minimum: minVal,
+                    maximum: maxVal,
+                    interval: interval,
+                    labelFormat: ' {value} ${widgetDetails[0].biUnit}',
+                  ),
+                  tooltipBehavior: _tooltip,
+                  series: <ChartSeries<ChartData, String>>[
+                    ColumnSeries<ChartData, String>(
+                        dataLabelSettings: DataLabelSettings(
+                          alignment: ChartAlignment.center,
+                          labelAlignment: ChartDataLabelAlignment.outer,
+                          labelPosition: ChartDataLabelPosition.outside,
 
-                        textStyle: TextStyle(
-                          letterSpacing: 1,
-                          color: Colors.black,
-                          fontFamily: 'Pilat Heavy',
-                          fontSize: 10,
+                          textStyle: TextStyle(
+                            color: Colors.black,
+                            fontFamily: 'Pilat ',
+                            fontSize: 14,
+                          ),
+                          // Renders the data label
+                          isVisible: true,
                         ),
-                        // Renders the data label
-                        isVisible: true,
-                      ),
-                      dataSource: data,
-                      xValueMapper: (_ChartData data, _) => data.x,
-                      yValueMapper: (_ChartData data, _) => data.y,
-                      name: widget.chartTitle,
-                      color: Colors.indigo[900]),
-                ]),
+                        dataSource: data,
+                        xValueMapper: (ChartData data, _) => data.x,
+                        yValueMapper: (ChartData data, _) => data.y,
+                        name: widget.chartTitle,
+                        color: Colors.indigo[900]),
+                  ]),
+            ),
           ),
           IconButton(
               padding: EdgeInsets.zero,
@@ -151,9 +232,14 @@ class FilteredBIDChartViewState extends State<FilteredBIDChartView> {
                   default:
                 }
                 Get.toNamed(pageRoute, arguments: {
-                  "bidWidgetDetails": widget.bidWidgetDetails,
+                  "bidWidgetDetails": widgetDetails,
                   "chartType": widget.chartType,
                   "chartTitle": widget.chartTitle,
+                  "chartData": data,
+                  "yearList": yearList,
+                  "minVal": minVal,
+                  "maxVal": maxVal,
+                  "interval": interval,
                 });
               },
               icon: Icon(Icons.arrow_forward)),
@@ -214,12 +300,7 @@ class FilteredBIDChartViewState extends State<FilteredBIDChartView> {
 
                         data.clear();
 
-                        for (var wid in showedWidgets) {
-                          data.add(
-                            _ChartData(
-                                wid.countryCode!.toUpperCase(), wid.biValue),
-                          );
-                        }
+                        setChartXvalue();
                       });
                     },
                   )
@@ -246,8 +327,8 @@ class FilteredBIDChartViewState extends State<FilteredBIDChartView> {
   }
 }
 
-class _ChartData {
-  _ChartData(this.x, this.y);
+class ChartData {
+  ChartData(this.x, this.y);
 
   final String x;
   final double y;

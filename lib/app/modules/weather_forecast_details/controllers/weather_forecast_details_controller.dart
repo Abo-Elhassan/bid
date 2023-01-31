@@ -1,3 +1,4 @@
+import 'package:bid_app/app/core/values/app_assets.dart';
 import 'package:bid_app/app/data/models/requests/filter_data_request.dart';
 import 'package:bid_app/app/data/models/requests/weather_forecast_request.dart';
 import 'package:bid_app/app/data/models/responses/filter_data_response.dart';
@@ -5,72 +6,59 @@ import 'package:bid_app/app/data/models/responses/weather_forecast_response.dart
 import 'package:bid_app/app/data/providers/weather_forecast_provider.dart';
 import 'package:bid_app/app/data/providers/widget_data_provider.dart';
 import 'package:bid_app/app/data/utilities/helpers.dart';
+import 'package:bid_app/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 
-class WeatherForecastDetailsController extends GetxController {
-  final WeatherForecastResponse weatherForecastDetails = Get.arguments;
-  final localStorage = GetStorage();
-  late String username;
-  late List<Terminal> terminalList = [];
-  late List<WeatherForecastResponse> weatherForecastDate = [];
-  late Terminal showedTerminal = Terminal(
-      portUno: 0,
-      terminalUno: 0,
-      terminalCode: "",
-      terminalName: "",
-      locationID: "",
-      isSelected: false,
-      isPortSelected: false);
-  RxBool isloading = false.obs;
+class WeatherForecastDetailsController extends GetxController with StateMixin {
+  final routeArguments = Get.arguments as Map<String, dynamic>;
+  late Rx<WeatherForecastResponse> weatherForecastDetails =
+      WeatherForecastResponse().obs;
+  late Port showedPort = Port();
 
   @override
   void onInit() async {
-    // username = localStorage.read('username').toString().toUpperCase();
-    // try {
-    //   isloading.value = true;
+    showedPort = routeArguments["showedPort"];
+    weatherForecastDetails.value = routeArguments["weatherForecastDetails"];
+    change(null, status: RxStatus.success());
+    super.onInit();
+  }
 
-    //   if (await Helpers.checkConnectivity()) {
-    //     final filterBody = FilterDataRequest(
-    //         filterTypeUno: 4,
-    //         languageUno: 1033,
-    //         userUno: 9,
-    //         companyUno: 1,
-    //         condition: 0);
+  void fetchData(bool isInit, {String? portName}) async {
+    change(null, status: RxStatus.loading());
+    try {
+      if (await Helpers.checkConnectivity()) {
+        final weatherBody = WeatherForecastRequest(
+            locationID: showedPort.locationID.toString(),
+            PortUno: showedPort.portUno,
+            userUno: Helpers.getCurrentUser().userUno,
+            companyUno: 1,
+            condition: 0);
 
-    //     final filterData =
-    //         await Get.find<WidgetDataProvider>().getBIDFilterData(filterBody);
-    //     final weatherBody = WeatherForecastRequest(
-    //         locationID: "299429",
-    //         terminalUno: 1,
-    //         userUno: 9,
-    //         companyUno: 1,
-    //         condition: 0);
-    //     weatherForecastDate.add(await Get.find<WeatherForecastProvider>()
-    //         .getWeatherForecastDetails(weatherBody));
+        weatherForecastDetails.value = await Get.find<WeatherForecastProvider>()
+            .getWeatherForecastDetails(weatherBody);
 
-    //     terminalList = filterData.terminalList;
-    //     showedTerminal = terminalList[0];
+        if (weatherForecastDetails.value.statusCode == 401) {
+          await Get.toNamed(Routes.LOGIN);
+          return;
+        }
 
-    //     isloading.value = false;
-
-    //     if (filterData.statusCode != 200 ||
-    //         weatherForecastDate[0].currentWeatherDetails.statusCode != 200) {
-    //       await Helpers.dialog(
-    //           Icons.error, Colors.red, 'An Error Occured While Rendering Data');
-    //     }
-    //   } else {
-    //     await Helpers.dialog(Icons.wifi_off_outlined, Colors.red,
-    //         'Please check Your Netowork Connection');
-    //   }
-    //   isloading.value = false;
-    // } catch (error) {
-    //   isloading.value = false;
-
-    //   await Helpers.dialog(Icons.error, Colors.red, 'An Error Occured!!');
-    // }
+        if (weatherForecastDetails.value.statusCode == 500) {
+          change(null,
+              status: RxStatus.error(
+                  "Sorry! Intenral Server Error Occured During Rendering  Weather Forecast Data"));
+          return;
+        }
+      } else {
+        await Helpers.dialog(Icons.wifi_off_outlined, Colors.red,
+            'Please check Your Netowork Connection');
+      }
+      change(null, status: RxStatus.success());
+    } catch (error) {
+      change(null, status: RxStatus.error("Sorry! Internal Error Occured"));
+    }
   }
 
   Widget buildDayWeather(int i) {
@@ -81,7 +69,7 @@ class WeatherForecastDetailsController extends GetxController {
           DateFormat("EEEE,  MMM d")
               .format(DateTime.fromMillisecondsSinceEpoch(int.parse(
                       weatherForecastDetails
-                          .dailyForecastsList![i].observationTimeEpochUTC
+                          .value.dailyForecastsList![i].observationTimeEpochUTC
                           .toString()) *
                   1000))
               .toUpperCase(),
@@ -102,7 +90,7 @@ class WeatherForecastDetailsController extends GetxController {
                 bottom: 0,
                 right: 0,
                 child: Image.asset(
-                  "assets/images/earth icon.png",
+                  Assets.kEarthLines,
                   height: MediaQuery.of(Get.context!).size.height * 0.12,
                   opacity: const AlwaysStoppedAnimation(.3),
                   fit: BoxFit.cover,
@@ -126,7 +114,7 @@ class WeatherForecastDetailsController extends GetxController {
                                 Padding(
                                   padding: const EdgeInsets.only(right: 10),
                                   child: Image.asset(
-                                    "assets/icons/SUN.png",
+                                    Assets.kMaxTemperature,
                                     height: MediaQuery.of(Get.context!)
                                             .size
                                             .height *
@@ -137,10 +125,13 @@ class WeatherForecastDetailsController extends GetxController {
                                   ),
                                 ),
                                 Text(
-                                  weatherForecastDetails.dailyForecastsList?[i]
+                                  weatherForecastDetails
+                                              .value
+                                              .dailyForecastsList?[i]
                                               .maxTemperature !=
                                           null
                                       ? weatherForecastDetails
+                                          .value
                                           .dailyForecastsList![i]
                                           .maxTemperature!
                                       : "N/A",
@@ -153,11 +144,11 @@ class WeatherForecastDetailsController extends GetxController {
                               ],
                             ),
                             Text(
-                              weatherForecastDetails
+                              weatherForecastDetails.value
                                           .dailyForecastsList?[i].weatherText !=
                                       null
                                   ? weatherForecastDetails
-                                      .dailyForecastsList![i].weatherText!
+                                      .value.dailyForecastsList![i].weatherText!
                                   : "N/A",
                               style: TextStyle(
                                 color: Colors.black,
@@ -170,7 +161,7 @@ class WeatherForecastDetailsController extends GetxController {
                                 Padding(
                                   padding: const EdgeInsets.only(right: 10),
                                   child: Image.asset(
-                                    "assets/icons/MOON.png",
+                                    Assets.kMinTemperature,
                                     height: MediaQuery.of(Get.context!)
                                             .size
                                             .height *
@@ -181,10 +172,13 @@ class WeatherForecastDetailsController extends GetxController {
                                   ),
                                 ),
                                 Text(
-                                  weatherForecastDetails.dailyForecastsList?[i]
+                                  weatherForecastDetails
+                                              .value
+                                              .dailyForecastsList?[i]
                                               .minTemperature !=
                                           null
                                       ? weatherForecastDetails
+                                          .value
                                           .dailyForecastsList![i]
                                           .minTemperature!
                                       : "N/A",
@@ -222,10 +216,12 @@ class WeatherForecastDetailsController extends GetxController {
                                   height: 10,
                                 ),
                                 Text(
-                                  weatherForecastDetails.dailyForecastsList?[i]
+                                  weatherForecastDetails
+                                              .value
+                                              .dailyForecastsList?[i]
                                               .windDirection !=
                                           null
-                                      ? weatherForecastDetails
+                                      ? weatherForecastDetails.value
                                           .dailyForecastsList![i].windDirection!
                                           .toUpperCase()
                                       : "N/A",
@@ -253,10 +249,12 @@ class WeatherForecastDetailsController extends GetxController {
                                   height: 10,
                                 ),
                                 Text(
-                                  weatherForecastDetails.dailyForecastsList?[i]
+                                  weatherForecastDetails
+                                              .value
+                                              .dailyForecastsList?[i]
                                               .windSpeed !=
                                           null
-                                      ? weatherForecastDetails
+                                      ? weatherForecastDetails.value
                                           .dailyForecastsList![i].windSpeed!
                                           .toUpperCase()
                                       : "N/A",
@@ -285,10 +283,12 @@ class WeatherForecastDetailsController extends GetxController {
                                   height: 10,
                                 ),
                                 Text(
-                                  weatherForecastDetails.dailyForecastsList?[i]
+                                  weatherForecastDetails
+                                              .value
+                                              .dailyForecastsList?[i]
                                               .humidity !=
                                           null
-                                      ? weatherForecastDetails
+                                      ? weatherForecastDetails.value
                                           .dailyForecastsList![i].humidity!
                                           .toUpperCase()
                                       : "N/A",
@@ -316,10 +316,12 @@ class WeatherForecastDetailsController extends GetxController {
                                   height: 10,
                                 ),
                                 Text(
-                                  weatherForecastDetails.dailyForecastsList?[i]
+                                  weatherForecastDetails
+                                              .value
+                                              .dailyForecastsList?[i]
                                               .rainProbability !=
                                           null
-                                      ? "${weatherForecastDetails.dailyForecastsList![i].rainProbability!} %"
+                                      ? "${weatherForecastDetails.value.dailyForecastsList![i].rainProbability!} %"
                                       : "N/A",
                                   style: TextStyle(
                                     color: Colors.black,

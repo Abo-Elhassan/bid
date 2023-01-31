@@ -15,10 +15,16 @@ class DevelopementView extends GetView<DevelopementController> {
       ),
       backgroundColor: Colors.white,
       body: BIDChart(
-        controller.bidWidgetDetails,
-        controller.filterData,
-        "DEVELOPEMENT",
-        "DEVELOPEMENT",
+        widgetDetails: controller.widgetDetails,
+        filterData: controller.filterData,
+        chartType: controller.chartType,
+        chartTitle: controller.chartTitle,
+        showedWidgets: controller.showedWidgets,
+        data: controller.data,
+        yearList: controller.yearList,
+        minVal: controller.minVal,
+        maxVal: controller.maxVal,
+        interval: controller.interval,
       ),
     );
   }

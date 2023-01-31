@@ -16,27 +16,29 @@ class NatureOfInvolvementView extends GetView<NatureOfInvolvementController> {
       appBar: AppBar(
         backgroundColor: Colors.white,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "NATURE OF INVOLVEMENT",
-              style: TextStyle(
-                color: theme.colorScheme.primary,
-                fontFamily: 'Pilat Heavy',
-                fontSize: 16,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(25),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "NATURE OF INVOLVEMENT",
+                style: TextStyle(
+                  color: theme.colorScheme.primary,
+                  fontFamily: 'Pilat Heavy',
+                  fontSize: 16,
+                ),
               ),
-            ),
-            controller.buildGredientLine(
-              mediaQuery,
-              theme,
-            ),
-            NatureOfInvolvement(
-              controller.noiData,
-            ),
-          ],
+              controller.buildGredientLine(
+                mediaQuery,
+                theme,
+              ),
+              NatureOfInvolvement(
+                controller.noiData,
+              ),
+            ],
+          ),
         ),
       ),
     );

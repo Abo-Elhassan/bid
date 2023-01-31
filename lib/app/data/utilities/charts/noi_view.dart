@@ -13,8 +13,12 @@ class NatureOfInvlovementView extends StatelessWidget {
     this.bidWidgetDetails,
   );
 
-  late List<BidWidgetDetails> noiData =
-      bidWidgetDetails.where((wid) => wid.biTypeUno == 7).toList();
+  late List<BidWidgetDetails> noiData = bidWidgetDetails
+      .where((wid) =>
+          wid.biTypeUno == 7 &&
+          wid.natureOfInvolvement != null &&
+          wid.natureOfInvolvement != "")
+      .toList();
 
   @override
   Widget build(BuildContext context) {

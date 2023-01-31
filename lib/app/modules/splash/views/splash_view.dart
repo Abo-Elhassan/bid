@@ -1,3 +1,4 @@
+import 'package:bid_app/app/core/values/app_assets.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -12,7 +13,7 @@ class SplashView extends GetView<SplashController> {
     return Scaffold(
       body: Stack(children: [
         Image.asset(
-          'assets/images/splash_background.gif',
+          Assets.kSplashBackground,
           alignment: Alignment.center,
           fit: BoxFit.fill,
           height: double.infinity,

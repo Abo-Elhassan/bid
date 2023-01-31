@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:bid_app/app/core/values/app_assets.dart';
 import 'package:bid_app/app/data/utilities/helpers.dart';
 import 'package:bid_app/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,7 @@ class LoginView extends GetView<LoginController> {
                 bottom: 0,
                 right: 0,
                 child: Image.asset(
-                  "assets/images/earth icon.png",
+                  Assets.kEarthLines,
                   height: mediaQuery.size.height * 0.24,
                   opacity: const AlwaysStoppedAnimation(.4),
                   fit: BoxFit.cover,
@@ -43,7 +44,7 @@ class LoginView extends GetView<LoginController> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Image.asset(
-                      "assets/images/splash.png",
+                      Assets.kDpLogo,
                       height: mediaQuery.size.height * 0.15,
                       fit: BoxFit.cover,
                       gaplessPlayback: true,
@@ -82,7 +83,7 @@ class LoginView extends GetView<LoginController> {
                         splashColor: const Color.fromRGBO(236, 236, 255, 1),
                         borderRadius: BorderRadius.circular(30),
                         child: Image.asset(
-                          "assets/images/LOGIN.png",
+                          Assets.kLogin,
                           height: mediaQuery.size.width * 0.17,
                           fit: BoxFit.cover,
                           gaplessPlayback: true,

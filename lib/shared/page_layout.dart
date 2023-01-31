@@ -1,3 +1,4 @@
+import 'package:bid_app/app/core/values/app_assets.dart';
 import 'package:bid_app/app/data/utilities/helpers.dart';
 import 'package:bid_app/app/data/utilities/side_menu.dart';
 import 'package:flutter/cupertino.dart';
@@ -40,7 +41,7 @@ class _PageLayoutState extends State<PageLayout> {
               child: RotatedBox(
                 quarterTurns: -1,
                 child: Image.asset(
-                  "assets/images/earth icon.png",
+                  Assets.kEarthLines,
                   height: 300,
                   opacity: const AlwaysStoppedAnimation(.5),
                   fit: BoxFit.cover,

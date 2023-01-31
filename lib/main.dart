@@ -53,5 +53,5 @@ void main() async {
     ),
   );
 
-  // FlutterNativeSplash.remove();
+// FlutterNativeSplash.remove();
 }

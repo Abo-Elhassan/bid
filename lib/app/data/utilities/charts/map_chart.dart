@@ -1,3 +1,4 @@
+import 'package:bid_app/app/core/values/app_assets.dart';
 import 'package:bid_app/app/data/models/responses/filter_data_response.dart';
 import 'package:bid_app/app/data/utilities/helpers.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,7 @@ import 'dart:math' as math;
 import 'package:syncfusion_flutter_maps/maps.dart';
 
 class MapChart extends StatefulWidget {
-  final List<Country>? countries;
+  final List<Country> countries;
   MapChart(this.countries);
 
   @override
@@ -14,73 +15,61 @@ class MapChart extends StatefulWidget {
 }
 
 class _MapChartState extends State<MapChart> {
-  late List<Model> data;
+  late List<Model> data = <Model>[];
   late MapShapeSource dataSource;
-  late MapZoomPanBehavior _zoomPanBehavior;
+  late MapZoomPanBehavior _zoomPanBehavior = MapZoomPanBehavior(
+    focalLatLng: MapLatLng(5.1751, 20.0421),
+    zoomLevel: 3.5,
+  );
   late bool isLoading = true;
 
   Future<void> fetchData() async {
-    data = <Model>[];
-    for (var country in widget.countries!) {
-      data.add(
-        Model(
-            country.countryName!,
-            Color.fromRGBO(
-              math.Random().nextInt(255),
-              math.Random().nextInt(255),
-              math.Random().nextInt(255),
-              1,
-            ),
-            country.countryName!),
+    if (widget.countries.isNotEmpty &&
+        widget.countries.any((country) => country.isSelected)) {
+      final selectedContries =
+          widget.countries.where((country) => country.isSelected).toList();
+
+      for (var country in selectedContries) {
+        data.add(
+          Model(
+              country.countryName!,
+              Color.fromRGBO(
+                math.Random().nextInt(255),
+                math.Random().nextInt(255),
+                math.Random().nextInt(255),
+                1,
+              ),
+              country.countryName!),
+        );
+
+        // _zoomPanBehavior = MapZoomPanBehavior(
+        //   focalLatLng: MapLatLng(5.1751, 20.0421),
+        //   zoomLevel: 3.5,
+        // );
+      }
+      dataSource = MapShapeSource.asset(
+        Assets.kWorldMap,
+        shapeDataField: 'name',
+        dataCount: data.length,
+        primaryValueMapper: (int index) => data[index].country,
+        //  dataLabelMapper: (int index) => data[index].countryCode,
+        shapeColorValueMapper: (int index) => data[index].color,
+      );
+    } else {
+      data = <Model>[];
+      dataSource = MapShapeSource.asset(
+        Assets.kWorldMap,
+        shapeDataField: 'name',
+        dataCount: data.length,
+        // primaryValueMapper: (int index) => data[index].country,
+        // //  dataLabelMapper: (int index) => data[index].countryCode,
+        // shapeColorValueMapper: (int index) => data[index].color,
       );
     }
-
-    dataSource = MapShapeSource.asset(
-      'assets/world-map.json',
-      shapeDataField: 'name',
-      dataCount: data.length,
-      primaryValueMapper: (int index) => data[index].country,
-      //  dataLabelMapper: (int index) => data[index].countryCode,
-      shapeColorValueMapper: (int index) => data[index].color,
-    );
-    _zoomPanBehavior = MapZoomPanBehavior(
-      focalLatLng: MapLatLng(5.1751, 20.0421),
-      zoomLevel: 3.5,
-    );
   }
 
   @override
   void initState() {
-    // data = <Model>[];
-    // for (var country in widget.countries!) {
-    //   data.add(
-    //     Model(
-    //         country.countryName!,
-    //         Color.fromRGBO(
-    //           math.Random().nextInt(255),
-    //           math.Random().nextInt(255),
-    //           math.Random().nextInt(255),
-    //           1,
-    //         ),
-    //         country.countryName!),
-    //   );
-    // }
-
-    // dataSource = MapShapeSource.asset(
-    //   'assets/world-map.json',
-    //   shapeDataField: 'name',
-    //   dataCount: data.length,
-    //   primaryValueMapper: (int index) => data[index].country,
-    //   //  dataLabelMapper: (int index) => data[index].countryCode,
-    //   shapeColorValueMapper: (int index) => data[index].color,
-    // );
-    // _zoomPanBehavior = MapZoomPanBehavior(
-    //   focalLatLng: MapLatLng(5.1751, 20.0421),
-    //   zoomLevel: 3.5,
-    // );
-    // setState(() {
-    //   isLoading = false;
-    // });
     super.initState();
   }
 

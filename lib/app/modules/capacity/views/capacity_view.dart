@@ -15,10 +15,16 @@ class CapacityView extends GetView<CapacityController> {
       ),
       backgroundColor: Colors.white,
       body: BIDChart(
-        controller.bidWidgetDetails,
-        controller.filterData,
-        "CAPACITY",
-        "CAPACITY",
+        widgetDetails: controller.widgetDetails,
+        filterData: controller.filterData,
+        chartType: controller.chartType,
+        chartTitle: controller.chartTitle,
+        showedWidgets: controller.showedWidgets,
+        data: controller.data,
+        yearList: controller.yearList,
+        minVal: controller.minVal,
+        maxVal: controller.maxVal,
+        interval: controller.interval,
       ),
     );
   }

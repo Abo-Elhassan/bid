@@ -1,3 +1,4 @@
+import 'package:bid_app/app/core/values/app_assets.dart';
 import 'package:bid_app/app/data/models/requests/filter_data_request.dart';
 
 import 'package:bid_app/app/data/models/requests/widget_data_reqeuest.dart';
@@ -15,6 +16,7 @@ import 'package:bid_app/app/data/utilities/charts/noi_view.dart';
 import 'package:bid_app/app/data/utilities/helpers.dart';
 import 'package:bid_app/app/data/utilities/charts/map_chart.dart';
 import 'package:bid_app/app/data/utilities/side_menu.dart';
+import 'package:darq/darq.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -34,6 +36,7 @@ class _HomeContentState extends State<HomeContent> {
   late WidgetDataResponse widgetsData = WidgetDataResponse();
   late FilterDataResponse filterData = FilterDataResponse();
   StringBuffer selectedRegions = StringBuffer();
+  final ScrollController scrollController = ScrollController();
   bool isLoading = false;
   bool isRegionChanged = false;
   bool isDataUpdated = false;
@@ -304,6 +307,9 @@ class _HomeContentState extends State<HomeContent> {
 
     filterData = await Get.find<WidgetDataProvider>()
         .getBIDFilterData(filterRequestBody);
+
+    filterData.operatorList =
+        filterData.operatorList!.distinct(((wid) => wid.operatorUno)).toList();
     if (filterData.statusCode == 401) {
       await Get.toNamed(Routes.LOGIN);
     } else if (filterData.statusCode == 500) {
@@ -916,144 +922,146 @@ class _HomeContentState extends State<HomeContent> {
     final theme = Theme.of(context);
     final mediaQuery = MediaQuery.of(context);
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          //if (isFilterDataFetched() && isWidgetsDataFetched())
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () async {
-              refreshData();
-            },
-          ),
-        ],
-      ),
-      drawer: SideMenu(Helpers.getCurrentUser().username.toString()),
-      body: Stack(children: [
-        Positioned(
-          right: -10,
-          top: 150,
-          child: RotatedBox(
-            quarterTurns: -1,
-            child: Image.asset(
-              "assets/images/earth icon.png",
-              height: 300,
-              opacity: const AlwaysStoppedAnimation(.5),
-              fit: BoxFit.cover,
-              gaplessPlayback: true,
+        appBar: AppBar(
+          actions: [
+            //if (isFilterDataFetched() && isWidgetsDataFetched())
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: () async {
+                refreshData();
+              },
+            ),
+          ],
+        ),
+        drawer: SideMenu(Helpers.getCurrentUser().username.toString()),
+        body: Stack(children: [
+          Positioned(
+            right: -10,
+            top: 150,
+            child: RotatedBox(
+              quarterTurns: -1,
+              child: Image.asset(
+                Assets.kEarthLines,
+                height: 300,
+                opacity: const AlwaysStoppedAnimation(.5),
+                fit: BoxFit.cover,
+                gaplessPlayback: true,
+              ),
             ),
           ),
-        ),
-        RefreshIndicator(
-          onRefresh: () async {
-            refreshData();
-          },
-          child: Visibility(
-            visible: isLoading == false,
-            replacement: Helpers.loadingIndicator(),
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: mediaQuery.size.width * 0.05,
-                vertical: mediaQuery.size.height * 0.01,
-              ),
-              child: isFilterDataFetched() && isWidgetsDataFetched()
-                  ? Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              '${selectedRegions.toString()}',
-                              style: TextStyle(
-                                color: theme.colorScheme.primary,
-                                fontFamily: 'Pilat Heavy',
-                                fontSize: 18,
-                              ),
-                            ),
-                            IconButton(
-                                padding: EdgeInsets.zero,
-                                visualDensity: VisualDensity(horizontal: -4),
-                                onPressed: () => dialog(),
-                                icon: const Icon(Icons.manage_search))
-                          ],
-                        ),
-                        buildGredientLine(
-                          mediaQuery,
-                          theme,
-                        ),
-                        Expanded(
-                          child: ListView(
+          RefreshIndicator(
+              onRefresh: () async {
+                refreshData();
+              },
+              child: Visibility(
+                  visible: isLoading == false,
+                  replacement: Helpers.loadingIndicator(),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: mediaQuery.size.width * 0.05,
+                      vertical: mediaQuery.size.height * 0.01,
+                    ),
+                    child: isFilterDataFetched() && isWidgetsDataFetched()
+                        ? Column(
                             children: [
-                              MapChart(filterData.countryList),
-                              SizedBox(
-                                height: 50,
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    '${selectedRegions.toString()}',
+                                    style: TextStyle(
+                                      color: theme.colorScheme.primary,
+                                      fontFamily: 'Pilat Heavy',
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                  IconButton(
+                                      padding: EdgeInsets.zero,
+                                      visualDensity:
+                                          VisualDensity(horizontal: -4),
+                                      onPressed: () => dialog(),
+                                      icon: const Icon(Icons.manage_search))
+                                ],
                               ),
-                              FilteredBIDChartView(
-                                widgetsData.bidWidgetDetails!,
-                                "GDP",
-                                "GDP",
+                              buildGredientLine(
+                                mediaQuery,
+                                theme,
                               ),
-                              SizedBox(
-                                height: 50,
-                              ),
-                              FilteredBIDChartView(
-                                widgetsData.bidWidgetDetails!,
-                                "GDPGR",
-                                "GDPGR",
-                              ),
-                              SizedBox(
-                                height: 50,
-                              ),
-                              FilteredBIDChartView(
-                                widgetsData.bidWidgetDetails!,
-                                "POP",
-                                "POPULATION",
-                              ),
-                              SizedBox(
-                                height: 50,
-                              ),
-                              FilteredBIDChartView(
-                                widgetsData.bidWidgetDetails!,
-                                "VOL",
-                                "VOLUME",
-                              ),
-                              SizedBox(
-                                height: 50,
-                              ),
-                              BIDChartView(
-                                widgetsData.bidWidgetDetails!,
-                                filterData,
-                                "CAPACITY",
-                                "CAPACITY",
-                              ),
-                              SizedBox(
-                                height: 50,
-                              ),
-                              BIDChartView(
-                                widgetsData.bidWidgetDetails!,
-                                filterData,
-                                "DEVELOPMENT",
-                                "DEVELOPMENT",
-                              ),
-                              SizedBox(
-                                height: 50,
-                              ),
-                              NatureOfInvlovementView(
-                                widgetsData.bidWidgetDetails!,
-                              ),
-                              SizedBox(
-                                height: 50,
+                              Expanded(
+                                child: ListView(
+                                  padding: EdgeInsets.zero,
+                                  controller: scrollController,
+                                  children: [
+                                    MapChart(filterData.countryList!),
+                                    SizedBox(
+                                      height: 50,
+                                    ),
+                                    FilteredBIDChartView(
+                                      widgetsData.bidWidgetDetails!,
+                                      "GDP",
+                                      "GDP",
+                                    ),
+                                    SizedBox(
+                                      height: 50,
+                                    ),
+                                    FilteredBIDChartView(
+                                      widgetsData.bidWidgetDetails!,
+                                      "GDPGR",
+                                      "GDPGR",
+                                    ),
+                                    SizedBox(
+                                      height: 50,
+                                    ),
+                                    FilteredBIDChartView(
+                                      widgetsData.bidWidgetDetails!,
+                                      "POP",
+                                      "POPULATION",
+                                    ),
+                                    SizedBox(
+                                      height: 50,
+                                    ),
+                                    FilteredBIDChartView(
+                                      widgetsData.bidWidgetDetails!,
+                                      "VOL",
+                                      "VOLUME",
+                                    ),
+                                    SizedBox(
+                                      height: 50,
+                                    ),
+                                    BIDChartView(
+                                      widgetsData.bidWidgetDetails!,
+                                      filterData,
+                                      "CAPACITY",
+                                      "CAPACITY",
+                                    ),
+                                    SizedBox(
+                                      height: 50,
+                                    ),
+                                    BIDChartView(
+                                      widgetsData.bidWidgetDetails!,
+                                      filterData,
+                                      "DEVELOPMENT",
+                                      "DEVELOPMENT",
+                                    ),
+                                    SizedBox(
+                                      height: 50,
+                                    ),
+                                    NatureOfInvlovementView(
+                                      widgetsData.bidWidgetDetails!,
+                                    ),
+                                    SizedBox(
+                                      height: 50,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
-                          ),
-                        )
-                      ],
-                    )
-                  : Center(
-                      child: Text("An Error Occured While Rendering Data")),
-            ),
-          ),
-        ),
-      ]),
-    );
+                          )
+                        : Center(
+                            child:
+                                Text("An Error Occured While Rendering Data")),
+                  )))
+        ]));
   }
 }

@@ -1,3 +1,4 @@
+import 'package:bid_app/app/core/values/app_assets.dart';
 import 'package:bid_app/app/data/utilities/helpers.dart';
 import 'package:bid_app/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
@@ -20,8 +21,7 @@ class LandingView extends GetView<LandingController> {
           height: double.infinity,
           decoration: const BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage("assets/images/background.png"),
-                  fit: BoxFit.cover)),
+                  image: AssetImage(Assets.kBackground), fit: BoxFit.cover)),
         ),
         Container(
           decoration: const BoxDecoration(
@@ -39,7 +39,7 @@ class LandingView extends GetView<LandingController> {
                 height: mediaQuery.size.height * 0.1,
               ),
               Image.asset(
-                "assets/images/splash.png",
+                Assets.kDpLogo,
                 height: mediaQuery.size.height * 0.16,
                 fit: BoxFit.cover,
                 gaplessPlayback: true,
@@ -75,7 +75,7 @@ class LandingView extends GetView<LandingController> {
                   splashColor: const Color.fromRGBO(236, 236, 255, 1),
                   borderRadius: BorderRadius.circular(30),
                   child: Image.asset(
-                    "assets/images/START.png",
+                    Assets.kStart,
                     height: mediaQuery.size.width * 0.17,
                     fit: BoxFit.cover,
                     gaplessPlayback: true,
