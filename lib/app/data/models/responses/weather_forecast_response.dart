@@ -1,23 +1,23 @@
 class WeatherForecastResponse {
-  late List<DailyForecasts>? dailyForecastsList;
+  late List<DailyForecast>? dailyForecastList;
   late CurrentWeatherDetails? currentWeatherDetails;
   late int statusCode;
   late String? message;
 
   WeatherForecastResponse({
-    this.dailyForecastsList = const <DailyForecasts>[],
+    this.dailyForecastList = const <DailyForecast>[],
     this.currentWeatherDetails,
     this.statusCode = 0,
     this.message = "",
   });
 
   WeatherForecastResponse.fromJson(Map<String, dynamic> json) {
-    dailyForecastsList = <DailyForecasts>[];
+    dailyForecastList = <DailyForecast>[];
     currentWeatherDetails =
         CurrentWeatherDetails.fromJson(json['currentWeatherDetails']);
 
     json['dailyForecastsList'].forEach((map) {
-      dailyForecastsList?.add(DailyForecasts.fromJson(map));
+      dailyForecastList?.add(DailyForecast.fromJson(map));
     });
     statusCode = json['statusCode'];
     message = json['message'];
@@ -60,7 +60,7 @@ class CurrentWeatherDetails {
   }
 }
 
-class DailyForecasts {
+class DailyForecast {
   late String? observationTimeEpochUTC;
   late String? weatherText;
   late String? minTemperature;
@@ -73,7 +73,7 @@ class DailyForecasts {
   late int statusCode;
   late String? message;
 
-  DailyForecasts({
+  DailyForecast({
     this.observationTimeEpochUTC = "",
     this.weatherText = "",
     this.minTemperature = "",
@@ -87,7 +87,7 @@ class DailyForecasts {
     this.message = "",
   });
 
-  DailyForecasts.fromJson(Map<String, dynamic> json) {
+  DailyForecast.fromJson(Map<String, dynamic> json) {
     observationTimeEpochUTC = json['observationTimeEpochUTC'];
     weatherText = json['weatherText'];
     minTemperature = json['minTemperature'];

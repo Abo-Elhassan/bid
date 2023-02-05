@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:bid_app/app/data/models/responses/login_response.dart';
-import 'package:bid_app/app/data/utilities/helpers.dart';
+import 'package:bid_app/app/core/utilities/helpers.dart';
 import 'package:bid_app/main.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/request/request.dart';

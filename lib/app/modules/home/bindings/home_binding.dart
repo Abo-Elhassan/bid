@@ -1,6 +1,6 @@
 import 'package:bid_app/app/data/models/responses/widget_data_response.dart';
 import 'package:bid_app/app/data/providers/weather_forecast_provider.dart';
-import 'package:bid_app/app/data/providers/widget_data_provider.dart';
+import 'package:bid_app/app/data/providers/dashboard_provider.dart';
 import 'package:get/get.dart';
 
 import '../controllers/home_controller.dart';
@@ -11,8 +11,8 @@ class HomeBinding extends Bindings {
     Get.lazyPut<HomeController>(
       () => HomeController(),
     );
-    Get.lazyPut<WidgetDataProvider>(
-      () => WidgetDataProvider(),
+    Get.lazyPut<DashboardProvider>(
+      () => DashboardProvider(),
       fenix: true,
     );
     Get.lazyPut<WeatherForecastProvider>(

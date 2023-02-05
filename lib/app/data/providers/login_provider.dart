@@ -8,17 +8,19 @@ class LoginProvider extends GetConnect {
   @override
   void onInit() {
     httpClient.baseUrl = 'https://mearogateway.dpworld.com/Auth';
-
     httpClient.timeout = const Duration(minutes: 2);
+
     trustedCertificates = [
       TrustedCertificate(certificate.buffer.asUint8List())
     ];
     allowAutoSignedCert = false;
+
     httpClient.defaultContentType = 'application/json';
 
     httpClient.defaultDecoder = (map) {
       return LoginResponse.fromJson(map);
     };
+    super.onInit();
   }
 
   Future<LoginResponse> login(LoginRequest credentials) async {

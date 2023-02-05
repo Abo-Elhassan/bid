@@ -1,8 +1,8 @@
-import 'package:bid_app/app/data/utilities/helpers.dart';
+import 'package:bid_app/app/core/utilities/helpers.dart';
 import 'package:bid_app/app/data/models/requests/filter_data_request.dart';
 import 'package:bid_app/app/data/models/requests/login_request.dart';
 import 'package:bid_app/app/data/providers/login_provider.dart';
-import 'package:bid_app/app/data/providers/widget_data_provider.dart';
+import 'package:bid_app/app/data/providers/dashboard_provider.dart';
 import 'package:bid_app/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,6 +13,7 @@ class LoginController extends GetxController {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   RxBool isloading = false.obs;
+  RxBool _passwordVisible = false.obs;
   Widget buildTextInput(
     TextEditingController inputController,
     String label,
@@ -22,7 +23,11 @@ class LoginController extends GetxController {
     final themeData = Theme.of(Get.context!);
     final mediaQuery = MediaQuery.of(Get.context!);
     return TextFormField(
-      obscureText: label == 'Password' ? true : false,
+      obscureText: label != 'Password'
+          ? false
+          : _passwordVisible.isTrue
+              ? false
+              : true,
       keyboardType: textInputType,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       textAlign: TextAlign.start,
@@ -36,28 +41,45 @@ class LoginController extends GetxController {
         fontWeight: FontWeight.bold,
       ),
       decoration: InputDecoration(
-          errorMaxLines: 2,
-          hintStyle: const TextStyle(
-            color: Color.fromRGBO(58, 58, 66, 1),
-            fontFamily: 'Pilat Demi',
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-          ),
-          labelStyle: const TextStyle(
-            color: Color.fromRGBO(15, 15, 25, 1),
-            fontFamily: 'Pilat Demi',
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-          floatingLabelStyle: const TextStyle(
-            color: Color.fromRGBO(110, 110, 114, 1),
-            fontFamily: 'Pilat Demi',
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-          contentPadding: const EdgeInsets.only(bottom: 10),
-          labelText: label,
-          hintText: placeHolder),
+        errorMaxLines: 2,
+        hintStyle: const TextStyle(
+          color: Color.fromRGBO(58, 58, 66, 1),
+          fontFamily: 'Pilat Demi',
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+        ),
+        labelStyle: const TextStyle(
+          color: Color.fromRGBO(15, 15, 25, 1),
+          fontFamily: 'Pilat Demi',
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+        floatingLabelStyle: const TextStyle(
+          color: Color.fromRGBO(110, 110, 114, 1),
+          fontFamily: 'Pilat Demi',
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+        contentPadding: const EdgeInsets.only(bottom: 10),
+        labelText: label,
+        hintText: placeHolder,
+        suffixIcon: label == 'Password'
+            ? IconButton(
+                icon: Icon(
+                  // Based on passwordVisible state choose the icon
+                  _passwordVisible.value
+                      ? Icons.visibility_off
+                      : Icons.visibility,
+                  color: Colors.black,
+                ),
+                onPressed: () {
+                  // Update the state i.e. toogle the state of passwordVisible variable
+
+                  _passwordVisible.value = !_passwordVisible.value;
+                },
+              )
+            : const SizedBox(),
+      ),
       controller: inputController,
       validator: (value) {
         if (value!.trim().isEmpty) {
@@ -88,7 +110,18 @@ class LoginController extends GetxController {
           usernameController.text = "";
           passwordController.text = "";
           if (resopnse.statusCode == 200) {
-            await Get.offNamed(Routes.HOME);
+            switch (Helpers.getCurrentUser().roleType) {
+              case 1:
+                await Get.offNamed(Routes.HOME);
+                break;
+              case 2:
+                await Get.toNamed(Routes.HOME);
+                break;
+              case 3:
+                await Get.toNamed(Routes.WEATHER_FORECAST);
+                break;
+              default:
+            }
           } else {
             await Helpers.dialog(
                 Icons.error, Colors.red, 'Incorrect username or password');
@@ -102,7 +135,7 @@ class LoginController extends GetxController {
     } catch (error) {
       isloading.value = false;
 
-      await Helpers.dialog(Icons.error, Colors.red, 'An Error Occured!!');
+      await Helpers.dialog(Icons.error, Colors.red, error.toString());
     }
   }
 }

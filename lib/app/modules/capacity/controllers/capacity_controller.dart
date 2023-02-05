@@ -1,6 +1,6 @@
 import 'package:bid_app/app/data/models/responses/filter_data_response.dart';
 import 'package:bid_app/app/data/models/responses/widget_data_response.dart';
-import 'package:bid_app/app/data/utilities/charts/filtered_bid_chart_view.dart';
+import 'package:bid_app/shared/charts/filtered_bid_chart_view.dart';
 import 'package:get/get.dart';
 
 class CapacityController extends GetxController {

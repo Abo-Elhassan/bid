@@ -6,20 +6,21 @@ import 'package:bid_app/app/data/models/responses/filter_data_response.dart';
 
 import 'package:bid_app/app/data/models/responses/widget_data_response.dart';
 
-import 'package:bid_app/app/data/providers/widget_data_provider.dart';
-import 'package:bid_app/app/data/utilities/charts/filtered_bid_chart_view.dart';
-import 'package:bid_app/app/data/utilities/charts/bid_chart_view.dart';
+import 'package:bid_app/app/data/providers/dashboard_provider.dart';
+import 'package:bid_app/shared/charts/filtered_bid_chart_view.dart';
+import 'package:bid_app/shared/charts/bid_chart_view.dart';
 
-import 'package:bid_app/app/data/utilities/charts/noi.dart';
-import 'package:bid_app/app/data/utilities/charts/noi_view.dart';
+import 'package:bid_app/shared/charts/noi.dart';
+import 'package:bid_app/shared/charts/noi_view.dart';
+import 'package:bid_app/shared/side_menu.dart';
 
-import 'package:bid_app/app/data/utilities/helpers.dart';
-import 'package:bid_app/app/data/utilities/charts/map_chart.dart';
-import 'package:bid_app/app/data/utilities/side_menu.dart';
+import 'package:bid_app/app/core/utilities/helpers.dart';
+import 'package:bid_app/shared/charts/map_chart.dart';
 import 'package:darq/darq.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:get_storage/get_storage.dart';
 
 import '../../../routes/app_pages.dart';
@@ -37,6 +38,11 @@ class _HomeContentState extends State<HomeContent> {
   late FilterDataResponse filterData = FilterDataResponse();
   StringBuffer selectedRegions = StringBuffer();
   final ScrollController scrollController = ScrollController();
+  late List<Country> visibleCountryList = <Country>[];
+  late List<Port> visiblePortList = <Port>[];
+  late List<Terminal> visibleTerminalList = <Terminal>[];
+  late List<Operator> visibleOperatorList = <Operator>[];
+
   bool isLoading = false;
   bool isRegionChanged = false;
   bool isDataUpdated = false;
@@ -46,11 +52,129 @@ class _HomeContentState extends State<HomeContent> {
   bool isTerminalFilterVisible = false;
   bool isOperatorFilterVisible = false;
   bool isFilterOpened = false;
+  bool isAllRegionsSelected = false;
+  bool isAllCountriesSelected = true;
+  bool isAllPortsSelected = true;
+  bool isAllTerminalsSelected = true;
+  bool isAllOperatorsSelected = true;
 
   @override
   void initState() {
     super.initState();
     initData();
+  }
+
+  void checkSelectAll(String filterType) {
+    switch (filterType) {
+      case "REGION":
+        if (filterData.regionList!.every((reg) => reg.isFitlerSelected)) {
+          isAllRegionsSelected = true;
+        } else {
+          isAllRegionsSelected = false;
+        }
+
+        break;
+      case "COUNTRY":
+        if (visibleCountryList.every((con) => con.isFitlerSelected)) {
+          isAllCountriesSelected = true;
+        } else {
+          isAllCountriesSelected = false;
+        }
+
+        break;
+      case "PORT":
+        if (visiblePortList.every((por) => por.isFitlerSelected)) {
+          isAllPortsSelected = true;
+        } else {
+          isAllPortsSelected = false;
+        }
+        break;
+      case "TERMINAL":
+        if (visibleTerminalList.every((ter) => ter.isFitlerSelected)) {
+          isAllTerminalsSelected = true;
+        } else {
+          isAllTerminalsSelected = false;
+        }
+
+        break;
+      case "OPERATOR":
+        if (visibleOperatorList.every((op) => op.isFitlerSelected)) {
+          isAllOperatorsSelected = true;
+        } else {
+          isAllOperatorsSelected = false;
+        }
+        break;
+      default:
+    }
+  }
+
+  void onSelectAll(String filterType, bool isSelectAll) {
+    switch (filterType) {
+      case "REGION":
+        if (isSelectAll) {
+          filterData.regionList?.forEach((region) {
+            region.isFitlerSelected = true;
+          });
+        } else {
+          filterData.regionList?.forEach((region) {
+            region.isFitlerSelected = false;
+          });
+        }
+        updateCountryFilter();
+        updatePortFilter();
+        updateTerminalAndOperatorFilters();
+
+        break;
+      case "COUNTRY":
+        if (isSelectAll) {
+          visibleCountryList.forEach((con) {
+            con.isFitlerSelected = true;
+          });
+        } else {
+          visibleCountryList.forEach((con) {
+            con.isFitlerSelected = false;
+          });
+        }
+        updatePortFilter();
+        updateTerminalAndOperatorFilters();
+        break;
+      case "PORT":
+        if (isSelectAll) {
+          visiblePortList.forEach((port) {
+            port.isFitlerSelected = true;
+          });
+        } else {
+          visiblePortList.forEach((port) {
+            port.isFitlerSelected = false;
+          });
+        }
+        updateTerminalAndOperatorFilters();
+        break;
+      case "TERMINAL":
+        if (isSelectAll) {
+          visibleTerminalList.forEach((terminal) {
+            terminal.isFitlerSelected = true;
+          });
+        } else {
+          visibleTerminalList.forEach((terminal) {
+            terminal.isFitlerSelected = false;
+          });
+        }
+
+        break;
+      case "OPERATOR":
+        if (isSelectAll) {
+          visibleOperatorList.forEach((operator) {
+            operator.isFitlerSelected = true;
+          });
+        } else {
+          visibleOperatorList.forEach((operator) {
+            operator.isFitlerSelected = false;
+          });
+        }
+        break;
+      default:
+    }
   }
 
   void getSelectedRegion() {
@@ -71,6 +195,12 @@ class _HomeContentState extends State<HomeContent> {
 
   void resetFilter() {
     setState(() {
+      isAllRegionsSelected = false;
+      isAllCountriesSelected = false;
+      isAllPortsSelected = false;
+      isAllTerminalsSelected = false;
+      isAllOperatorsSelected = false;
+
       filterData.regionList?.forEach((region) {
         region.isSelected = true;
         region.isFitlerSelected = false;
@@ -234,14 +364,15 @@ class _HomeContentState extends State<HomeContent> {
     setState(() {
       isLoading = true;
     });
+
     try {
       if (await Helpers.checkConnectivity()) {
         if (filterData.regionList!.any((reg) => reg.isSelected) &&
             filterData.countryList!.any((cont) => cont.isSelected)) {
-          getWidgetData(prepareWidgetDataBody(false));
+          await getWidgetData(prepareWidgetDataBody(false));
           getSelectedRegion();
         } else {
-          getWidgetData(prepareWidgetDataBody(true));
+          await getWidgetData(prepareWidgetDataBody(true));
           getSelectedRegion();
           setState(() {
             isLoading = false;
@@ -305,11 +436,9 @@ class _HomeContentState extends State<HomeContent> {
         companyUno: 1,
         condition: 0);
 
-    filterData = await Get.find<WidgetDataProvider>()
-        .getBIDFilterData(filterRequestBody);
+    filterData =
+        await Get.find<DashboardProvider>().getBIDFilterData(filterRequestBody);
 
-    filterData.operatorList =
-        filterData.operatorList!.distinct(((wid) => wid.operatorUno)).toList();
     if (filterData.statusCode == 401) {
       await Get.toNamed(Routes.LOGIN);
     } else if (filterData.statusCode == 500) {
@@ -319,7 +448,7 @@ class _HomeContentState extends State<HomeContent> {
   }
 
   Future<void> getWidgetData(WidgetDataRequest widgetRequestBody) async {
-    widgetsData = await Get.find<WidgetDataProvider>()
+    widgetsData = await Get.find<DashboardProvider>()
         .getBIDashboardWidgetData(widgetRequestBody);
 
     if (widgetsData.statusCode == 401) {
@@ -428,8 +557,10 @@ class _HomeContentState extends State<HomeContent> {
           terminalUnoBody.write('${terminal.terminalUno},');
         }
       }
-      for (var operator
-          in filterData.operatorList!.where((op) => op.isSelected)) {
+      for (var operator in filterData.operatorList!
+          .where((op) => op.isSelected)
+          .distinct(((opr) => opr.operatorUno))
+          .toList()) {
         if (filterData.operatorList?.last == operator) {
           operatorUnoBody.write(operator.operatorUno);
         } else {
@@ -466,8 +597,9 @@ class _HomeContentState extends State<HomeContent> {
               children: [
                 Container(
                   padding: EdgeInsets.symmetric(
-                      horizontal: MediaQuery.of(Get.context!).size.width * 0.04,
-                      vertical: MediaQuery.of(Get.context!).size.width * 0.02),
+                    horizontal: MediaQuery.of(Get.context!).size.width * 0.04,
+                    vertical: MediaQuery.of(Get.context!).size.width * 0.02,
+                  ),
                   width: double.infinity,
                   // child:
                   //  Container(
@@ -509,7 +641,34 @@ class _HomeContentState extends State<HomeContent> {
                             trailing: Icon(Icons.arrow_drop_down),
                           ),
                           if (isRegionFilterVisible)
-                            buildRegionFilter(setState),
+                            Column(
+                              children: [
+                                ListTile(
+                                  contentPadding: EdgeInsets.zero,
+                                  horizontalTitleGap: 0,
+                                  leading: Checkbox(
+                                    checkColor: Colors.black,
+                                    fillColor: MaterialStateProperty.all(
+                                      Colors.black,
+                                    ),
+                                    value: isAllRegionsSelected,
+                                    onChanged: (bool? val) {
+                                      setState(() {
+                                        isAllRegionsSelected = val!;
+                                        onSelectAll("REGION", val);
+                                      });
+                                    },
+                                  ),
+                                  title: Text(
+                                    "Select All",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                                buildRegionFilter(setState)
+                              ],
+                            ),
                           ListTile(
                             onTap: () {
                               setState(() {
@@ -520,6 +679,7 @@ class _HomeContentState extends State<HomeContent> {
                                 isTerminalFilterVisible = false;
                                 isOperatorFilterVisible = false;
                                 isFilterOpened = true;
+                                checkSelectAll("COUNTRIES");
                               });
                             },
                             visualDensity: VisualDensity(vertical: -4),
@@ -534,7 +694,34 @@ class _HomeContentState extends State<HomeContent> {
                             trailing: Icon(Icons.arrow_drop_down),
                           ),
                           if (isCountryFilterVisible)
-                            buildCountryFilter(setState),
+                            Column(
+                              children: [
+                                ListTile(
+                                  contentPadding: EdgeInsets.zero,
+                                  horizontalTitleGap: 0,
+                                  leading: Checkbox(
+                                    checkColor: Colors.black,
+                                    fillColor: MaterialStateProperty.all(
+                                      Colors.black,
+                                    ),
+                                    value: isAllCountriesSelected,
+                                    onChanged: (bool? val) {
+                                      setState(() {
+                                        isAllCountriesSelected = val!;
+                                        onSelectAll("COUNTRY", val);
+                                      });
+                                    },
+                                  ),
+                                  title: Text(
+                                    "Select All",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                                buildCountryFilter(setState),
+                              ],
+                            ),
                           ListTile(
                             onTap: () {
                               setState(() {
@@ -557,7 +744,35 @@ class _HomeContentState extends State<HomeContent> {
                             ),
                             trailing: Icon(Icons.arrow_drop_down),
                           ),
-                          if (isPortFilterVisible) buildPortFilter(setState),
+                          if (isPortFilterVisible)
+                            Column(
+                              children: [
+                                ListTile(
+                                  contentPadding: EdgeInsets.zero,
+                                  horizontalTitleGap: 0,
+                                  leading: Checkbox(
+                                    checkColor: Colors.black,
+                                    fillColor: MaterialStateProperty.all(
+                                      Colors.black,
+                                    ),
+                                    value: isAllPortsSelected,
+                                    onChanged: (bool? val) {
+                                      setState(() {
+                                        isAllPortsSelected = val!;
+                                        onSelectAll("PORT", val);
+                                      });
+                                    },
+                                  ),
+                                  title: Text(
+                                    "Select All",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                                buildPortFilter(setState),
+                              ],
+                            ),
                           ListTile(
                             onTap: () {
                               setState(() {
@@ -582,7 +797,34 @@ class _HomeContentState extends State<HomeContent> {
                             trailing: Icon(Icons.arrow_drop_down),
                           ),
                           if (isTerminalFilterVisible)
-                            buildTerminalFilter(setState),
+                            Column(
+                              children: [
+                                ListTile(
+                                  contentPadding: EdgeInsets.zero,
+                                  horizontalTitleGap: 0,
+                                  leading: Checkbox(
+                                    checkColor: Colors.black,
+                                    fillColor: MaterialStateProperty.all(
+                                      Colors.black,
+                                    ),
+                                    value: isAllTerminalsSelected,
+                                    onChanged: (bool? val) {
+                                      setState(() {
+                                        isAllTerminalsSelected = val!;
+                                        onSelectAll("TERMINAL", val);
+                                      });
+                                    },
+                                  ),
+                                  title: Text(
+                                    "Select All",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                                buildTerminalFilter(setState),
+                              ],
+                            ),
                           ListTile(
                             onTap: () {
                               setState(() {
@@ -609,7 +851,34 @@ class _HomeContentState extends State<HomeContent> {
                             trailing: Icon(Icons.arrow_drop_down),
                           ),
                           if (isOperatorFilterVisible)
-                            buildOperatorFilter(setState),
+                            Column(
+                              children: [
+                                ListTile(
+                                  contentPadding: EdgeInsets.zero,
+                                  horizontalTitleGap: 0,
+                                  leading: Checkbox(
+                                    checkColor: Colors.black,
+                                    fillColor: MaterialStateProperty.all(
+                                      Colors.black,
+                                    ),
+                                    value: isAllOperatorsSelected,
+                                    onChanged: (bool? val) {
+                                      setState(() {
+                                        isAllOperatorsSelected = val!;
+                                        onSelectAll("OPERATOR", val);
+                                      });
+                                    },
+                                  ),
+                                  title: Text(
+                                    "Select All",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                                buildOperatorFilter(setState),
+                              ],
+                            ),
                           SizedBox(
                             height: 50,
                           ),
@@ -636,9 +905,12 @@ class _HomeContentState extends State<HomeContent> {
                               TextButton(
                                 onPressed: () async {
                                   setState(() {
-                                    if (filterData.regionList!.any(
-                                            (reg) => reg.isFitlerSelected) ==
-                                        false) {
+                                    if (filterData.regionList!.any((reg) =>
+                                                reg.isFitlerSelected) ==
+                                            false ||
+                                        filterData.countryList!.any((con) =>
+                                                con.isFitlerSelected) ==
+                                            false) {
                                       resetFilter();
                                     } else {
                                       updateFilterOutput();
@@ -670,11 +942,21 @@ class _HomeContentState extends State<HomeContent> {
 
   Column buildRegionFilter(StateSetter setState) {
     if (filterData.regionList == null) {
-      return Column();
+      return Column(
+        children: [],
+      );
     }
     if (filterData.regionList!.isEmpty) {
-      return Column();
+      return Column(
+        children: [],
+      );
     }
+
+    setState(
+      () {
+        checkSelectAll("REGION");
+      },
+    );
 
     return Column(
       children: filterData.regionList!.map((reg) {
@@ -691,6 +973,7 @@ class _HomeContentState extends State<HomeContent> {
               setState(() {
                 reg.isFitlerSelected = val!;
                 reg.isSelected = val;
+                checkSelectAll("REGION");
                 updateCountryFilter();
                 updatePortFilter();
                 updateTerminalAndOperatorFilters();
@@ -715,12 +998,19 @@ class _HomeContentState extends State<HomeContent> {
     if (filterData.countryList!.isEmpty || filterData.regionList!.isEmpty) {
       return Column();
     }
+    setState(
+      () {
+        visibleCountryList = filterData.countryList!
+            .where((country) => filterData.regionList!.any((reg) =>
+                reg.isFitlerSelected && reg.regionUno == country.regionUno))
+            .toList();
+
+        checkSelectAll("COUNTRY");
+      },
+    );
 
     return Column(
-      children: filterData.countryList!
-          .where((country) => filterData.regionList!.any((reg) =>
-              reg.isFitlerSelected && reg.regionUno == country.regionUno))
-          .map((con) {
+      children: visibleCountryList.map((con) {
         return ListTile(
           contentPadding: EdgeInsets.zero,
           horizontalTitleGap: 0,
@@ -734,6 +1024,7 @@ class _HomeContentState extends State<HomeContent> {
               setState(() {
                 con.isFitlerSelected = val!;
                 con.isSelected = val;
+                checkSelectAll("COUNTRY");
                 updatePortFilter();
                 updateTerminalAndOperatorFilters();
               });
@@ -758,14 +1049,20 @@ class _HomeContentState extends State<HomeContent> {
       return Column();
     }
 
+    setState(
+      () {
+        visiblePortList = filterData.portList!
+            .where((port) => filterData.countryList!.any((con) =>
+                con.isFitlerSelected &&
+                con.countryUno == port.countryUno &&
+                filterData.regionList!.any((reg) =>
+                    reg.isFitlerSelected && reg.regionUno == con.regionUno)))
+            .toList();
+        checkSelectAll("PORT");
+      },
+    );
     return Column(
-      children: filterData.portList!
-          .where((port) => filterData.countryList!.any((con) =>
-              con.isFitlerSelected &&
-              con.countryUno == port.countryUno &&
-              filterData.regionList!.any((reg) =>
-                  reg.isFitlerSelected && reg.regionUno == con.regionUno)))
-          .map((por) {
+      children: visiblePortList.map((por) {
         return ListTile(
           contentPadding: EdgeInsets.zero,
           horizontalTitleGap: 0,
@@ -779,7 +1076,7 @@ class _HomeContentState extends State<HomeContent> {
               setState(() {
                 por.isFitlerSelected = val!;
                 por.isSelected = val;
-
+                checkSelectAll("PORT");
                 updateTerminalAndOperatorFilters();
               });
             },
@@ -802,18 +1099,25 @@ class _HomeContentState extends State<HomeContent> {
     if (filterData.terminalList!.isEmpty || filterData.portList!.isEmpty) {
       return Column();
     }
+    setState(
+      () {
+        visibleTerminalList = filterData.terminalList!
+            .where((terminal) => filterData.portList!.any((port) =>
+                port.isFitlerSelected &&
+                port.portUno == terminal.portUno &&
+                filterData.countryList!.any((con) =>
+                    con.isFitlerSelected &&
+                    con.countryUno == port.countryUno &&
+                    filterData.regionList!.any((reg) =>
+                        reg.isFitlerSelected &&
+                        reg.regionUno == con.regionUno))))
+            .toList();
+        checkSelectAll("TERMINAL");
+      },
+    );
 
     return Column(
-      children: filterData.terminalList!
-          .where((terminal) => filterData.portList!.any((port) =>
-              port.isFitlerSelected &&
-              port.portUno == terminal.portUno &&
-              filterData.countryList!.any((con) =>
-                  con.isFitlerSelected &&
-                  con.countryUno == port.countryUno &&
-                  filterData.regionList!.any((reg) =>
-                      reg.isFitlerSelected && reg.regionUno == con.regionUno))))
-          .map((ter) {
+      children: visibleTerminalList.map((ter) {
         return ListTile(
           contentPadding: EdgeInsets.zero,
           horizontalTitleGap: 0,
@@ -827,6 +1131,7 @@ class _HomeContentState extends State<HomeContent> {
               setState(() {
                 ter.isFitlerSelected = val!;
                 ter.isSelected = val;
+                checkSelectAll("TERMINAL");
               });
             },
           ),
@@ -846,6 +1151,22 @@ class _HomeContentState extends State<HomeContent> {
     if (filterData.operatorList!.isEmpty || filterData.portList!.isEmpty) {
       return Column();
     }
+    setState(
+      () {
+        visibleOperatorList = filterData.operatorList!
+            .where((operator) => filterData.portList!.any((port) =>
+                port.isFitlerSelected &&
+                port.portUno == operator.portUno &&
+                filterData.countryList!.any((con) =>
+                    con.isFitlerSelected &&
+                    con.countryUno == port.countryUno &&
+                    filterData.regionList!.any((reg) =>
+                        reg.isFitlerSelected &&
+                        reg.regionUno == con.regionUno))))
+            .toList();
+        checkSelectAll("OPERATOR");
+      },
+    );
 
     return Column(
       children: filterData.operatorList!
@@ -857,6 +1178,8 @@ class _HomeContentState extends State<HomeContent> {
                   con.countryUno == port.countryUno &&
                   filterData.regionList!.any((reg) =>
                       reg.isFitlerSelected && reg.regionUno == con.regionUno))))
+          .distinct(((wid) => wid.operatorUno))
+          .toList()
           .map((op) {
         return ListTile(
           contentPadding: EdgeInsets.zero,
@@ -871,6 +1194,7 @@ class _HomeContentState extends State<HomeContent> {
               setState(() {
                 op.isFitlerSelected = val!;
                 op.isSelected = val;
+                checkSelectAll("OPERATOR");
               });
             },
           ),
@@ -924,7 +1248,6 @@ class _HomeContentState extends State<HomeContent> {
     return Scaffold(
         appBar: AppBar(
           actions: [
-            //if (isFilterDataFetched() && isWidgetsDataFetched())
             IconButton(
               icon: const Icon(Icons.refresh),
               onPressed: () async {
@@ -933,7 +1256,9 @@ class _HomeContentState extends State<HomeContent> {
             ),
           ],
         ),
-        drawer: SideMenu(Helpers.getCurrentUser().username.toString()),
+        drawer: Helpers.getCurrentUser().roleType == 1
+            ? SideMenu(Helpers.getCurrentUser().username.toString())
+            : null,
         body: Stack(children: [
           Positioned(
             right: -10,

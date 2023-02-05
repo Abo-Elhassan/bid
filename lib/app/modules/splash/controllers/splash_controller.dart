@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:bid_app/app/routes/app_pages.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter_jailbreak_detection/flutter_jailbreak_detection.dart';
 import 'package:get/get.dart';
+import 'package:root_check/root_check.dart';
 
 class SplashController extends GetxController {
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
@@ -19,26 +23,24 @@ class SplashController extends GetxController {
 
   void initApplication() {
     Future.delayed(Duration(seconds: 4), () async {
-      // await cachImages();
-      // AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      // if (Platform.isAndroid) {
-      //   FlutterJailbreakDetection.developerMode.then((value) {
-      //     if (value || !(androidInfo.isPhysicalDevice)) {
-      //       Get.offAllNamed(Routes.ERROR);
-      //     }else{
-      //          else{
-      Get.offAllNamed(Routes.LANDING);
-      // }
-      //   });
-      // } else if (Platform.isIOS) {
-      //   IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      if (Platform.isAndroid) {
+        FlutterJailbreakDetection.developerMode.then((value) {
+          // if (value || !(androidInfo.isPhysicalDevice)) {
+          //   Get.offAllNamed(Routes.ERROR);
+          // } else {
+          Get.offAllNamed(Routes.LANDING);
+          // }
+        });
+      } else if (Platform.isIOS) {
+        IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
 
-      //   FlutterJailbreakDetection.jailbroken.then((value) {
-      //     if (value == true || !iosInfo.isPhysicalDevice) {
-      //       Get.offNamed(Routes.ERROR);
-      //     }
-      //   });
-      // }
+        FlutterJailbreakDetection.jailbroken.then((value) {
+          if (value == true || !iosInfo.isPhysicalDevice) {
+            Get.offNamed(Routes.ERROR);
+          }
+        });
+      }
 
       // RootCheck.isRooted.then((value) {
       //   if (value != null && value) {

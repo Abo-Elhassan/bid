@@ -4,10 +4,9 @@ import 'package:bid_app/app/data/models/requests/weather_forecast_request.dart';
 import 'package:bid_app/app/data/models/responses/filter_data_response.dart';
 import 'package:bid_app/app/data/models/responses/weather_forecast_response.dart';
 import 'package:bid_app/app/data/providers/weather_forecast_provider.dart';
-import 'package:bid_app/app/data/providers/widget_data_provider.dart';
-import 'package:bid_app/app/data/utilities/dropdown_list.dart';
-import 'package:bid_app/app/data/utilities/helpers.dart';
-import 'package:bid_app/app/data/utilities/side_menu.dart';
+import 'package:bid_app/app/data/providers/dashboard_provider.dart';
+import 'package:bid_app/shared/dropdown_list.dart';
+import 'package:bid_app/app/core/utilities/helpers.dart';
 import 'package:bid_app/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -31,16 +30,17 @@ class WeatherForecastContent extends StatelessWidget {
   List<Widget> buildContent() {
     return [
       ListTile(
+        visualDensity: VisualDensity(vertical: -4),
         leading: Image.asset(
           Assets.weatherIcon(
-              weatherForecastDetails.dailyForecastsList![1].weatherIcon),
-          height: MediaQuery.of(Get.context!).size.height * 0.035,
+              weatherForecastDetails.dailyForecastList![1].weatherIcon),
+          width: MediaQuery.of(Get.context!).size.width * 0.08,
           opacity: const AlwaysStoppedAnimation(.3),
           fit: BoxFit.cover,
           gaplessPlayback: true,
         ),
         title: Text(
-          "Tomorrow - ${weatherForecastDetails.dailyForecastsList![1].weatherText}",
+          "Tomorrow - ${weatherForecastDetails.dailyForecastList![1].weatherText}",
           style: TextStyle(
             color: Colors.black,
             fontFamily: 'Pilat ',
@@ -48,7 +48,7 @@ class WeatherForecastContent extends StatelessWidget {
           ),
         ),
         trailing: Text(
-          "${weatherForecastDetails.dailyForecastsList![1].minTemperature} / ${weatherForecastDetails.dailyForecastsList![1].maxTemperature}",
+          "${weatherForecastDetails.dailyForecastList![1].maxTemperature} / ${weatherForecastDetails.dailyForecastList![1].minTemperature}",
           style: TextStyle(
             color: Colors.black,
             fontFamily: 'Pilat ',
@@ -57,16 +57,17 @@ class WeatherForecastContent extends StatelessWidget {
         ),
       ),
       ListTile(
+        visualDensity: VisualDensity(vertical: -4),
         leading: Image.asset(
           Assets.weatherIcon(
-              weatherForecastDetails.dailyForecastsList![2].weatherIcon),
-          height: MediaQuery.of(Get.context!).size.height * 0.035,
+              weatherForecastDetails.dailyForecastList![2].weatherIcon),
+          width: MediaQuery.of(Get.context!).size.width * 0.08,
           opacity: const AlwaysStoppedAnimation(.3),
           fit: BoxFit.cover,
           gaplessPlayback: true,
         ),
         title: Text(
-          "${DateFormat.E().format(DateTime.fromMillisecondsSinceEpoch(int.parse(weatherForecastDetails.dailyForecastsList![2].observationTimeEpochUTC.toString()) * 1000))} - ${weatherForecastDetails.dailyForecastsList![2].weatherText}",
+          "${DateFormat.E().format(DateTime.fromMillisecondsSinceEpoch(int.parse(weatherForecastDetails.dailyForecastList![2].observationTimeEpochUTC.toString()) * 1000))} - ${weatherForecastDetails.dailyForecastList![2].weatherText}",
           style: TextStyle(
             color: Colors.black,
             fontFamily: 'Pilat ',
@@ -74,7 +75,7 @@ class WeatherForecastContent extends StatelessWidget {
           ),
         ),
         trailing: Text(
-          "${weatherForecastDetails.dailyForecastsList![2].minTemperature} / ${weatherForecastDetails.dailyForecastsList![2].maxTemperature}",
+          "${weatherForecastDetails.dailyForecastList![2].maxTemperature} / ${weatherForecastDetails.dailyForecastList![2].minTemperature}",
           style: TextStyle(
             color: Colors.black,
             fontFamily: 'Pilat ',
@@ -83,16 +84,17 @@ class WeatherForecastContent extends StatelessWidget {
         ),
       ),
       ListTile(
+        visualDensity: VisualDensity(vertical: -4),
         leading: Image.asset(
           Assets.weatherIcon(
-              weatherForecastDetails.dailyForecastsList![3].weatherIcon),
-          height: MediaQuery.of(Get.context!).size.height * 0.035,
+              weatherForecastDetails.dailyForecastList![3].weatherIcon),
+          width: MediaQuery.of(Get.context!).size.width * 0.08,
           opacity: const AlwaysStoppedAnimation(.3),
           fit: BoxFit.cover,
           gaplessPlayback: true,
         ),
         title: Text(
-          "${DateFormat.E().format(DateTime.fromMillisecondsSinceEpoch(int.parse(weatherForecastDetails.dailyForecastsList![3].observationTimeEpochUTC.toString()) * 1000))} - ${weatherForecastDetails.dailyForecastsList![3].weatherText}",
+          "${DateFormat.E().format(DateTime.fromMillisecondsSinceEpoch(int.parse(weatherForecastDetails.dailyForecastList![3].observationTimeEpochUTC.toString()) * 1000))} - ${weatherForecastDetails.dailyForecastList![3].weatherText}",
           style: TextStyle(
             color: Colors.black,
             fontFamily: 'Pilat ',
@@ -100,7 +102,7 @@ class WeatherForecastContent extends StatelessWidget {
           ),
         ),
         trailing: Text(
-          "${weatherForecastDetails.dailyForecastsList![3].minTemperature} / ${weatherForecastDetails.dailyForecastsList![3].maxTemperature}",
+          "${weatherForecastDetails.dailyForecastList![3].maxTemperature} / ${weatherForecastDetails.dailyForecastList![3].minTemperature}",
           style: TextStyle(
             color: Colors.black,
             fontFamily: 'Pilat ',
@@ -113,6 +115,8 @@ class WeatherForecastContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final mediaQuery = MediaQuery.of(context);
     return weatherForecastDetails.statusCode == 200
         ? Padding(
             padding: EdgeInsets.all(10),
@@ -124,7 +128,7 @@ class WeatherForecastContent extends StatelessWidget {
                     showedPort: showedPort,
                     updateData: updateData),
                 SizedBox(
-                  height: 20,
+                  height: mediaQuery.size.height * 0.03,
                 ),
                 Text(
                   weatherForecastDetails.currentWeatherDetails?.temperature !=
@@ -139,7 +143,7 @@ class WeatherForecastContent extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  height: 10,
+                  height: mediaQuery.size.height * 0.01,
                 ),
                 Image.asset(
                   Assets.weatherIcon(weatherForecastDetails
@@ -150,7 +154,7 @@ class WeatherForecastContent extends StatelessWidget {
                   gaplessPlayback: true,
                 ),
                 SizedBox(
-                  height: 10,
+                  height: mediaQuery.size.height * 0.01,
                 ),
                 Text(
                   weatherForecastDetails.currentWeatherDetails?.weatherText !=
@@ -166,10 +170,10 @@ class WeatherForecastContent extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  height: 30,
+                  height: mediaQuery.size.height * 0.03,
                 ),
                 Container(
-                  height: 120,
+                  height: mediaQuery.size.height * 0.17,
                   child: Card(
                     child: Stack(children: [
                       Positioned(
@@ -219,11 +223,11 @@ class WeatherForecastContent extends StatelessWidget {
                                         ),
                                         Text(
                                           weatherForecastDetails
-                                                      .dailyForecastsList?[0]
+                                                      .dailyForecastList?[0]
                                                       .maxTemperature !=
                                                   null
                                               ? weatherForecastDetails
-                                                  .dailyForecastsList![0]
+                                                  .dailyForecastList![0]
                                                   .maxTemperature!
                                               : "N/A",
                                           style: TextStyle(
@@ -254,11 +258,11 @@ class WeatherForecastContent extends StatelessWidget {
                                         ),
                                         Text(
                                           weatherForecastDetails
-                                                      .dailyForecastsList?[0]
+                                                      .dailyForecastList?[0]
                                                       .minTemperature !=
                                                   null
                                               ? weatherForecastDetails
-                                                  .dailyForecastsList![0]
+                                                  .dailyForecastList![0]
                                                   .minTemperature!
                                               : "N/A",
                                           style: TextStyle(
@@ -273,7 +277,7 @@ class WeatherForecastContent extends StatelessWidget {
                                 ),
                               ),
                               SizedBox(
-                                height: 10,
+                                height: mediaQuery.size.height * 0.01,
                               ),
                               Expanded(
                                 child: Row(
@@ -295,7 +299,7 @@ class WeatherForecastContent extends StatelessWidget {
                                           ),
                                         ),
                                         SizedBox(
-                                          height: 10,
+                                          height: mediaQuery.size.height * 0.01,
                                         ),
                                         Text(
                                           weatherForecastDetails
@@ -330,7 +334,7 @@ class WeatherForecastContent extends StatelessWidget {
                                           ),
                                         ),
                                         SizedBox(
-                                          height: 10,
+                                          height: mediaQuery.size.height * 0.01,
                                         ),
                                         Text(
                                           weatherForecastDetails
@@ -366,7 +370,7 @@ class WeatherForecastContent extends StatelessWidget {
                                           ),
                                         ),
                                         SizedBox(
-                                          height: 10,
+                                          height: mediaQuery.size.height * 0.01,
                                         ),
                                         Text(
                                           weatherForecastDetails
@@ -401,14 +405,14 @@ class WeatherForecastContent extends StatelessWidget {
                                           ),
                                         ),
                                         SizedBox(
-                                          height: 10,
+                                          height: mediaQuery.size.height * 0.01,
                                         ),
                                         Text(
                                           weatherForecastDetails
-                                                      .dailyForecastsList?[0]
+                                                      .dailyForecastList?[0]
                                                       .rainProbability !=
                                                   null
-                                              ? "${weatherForecastDetails.dailyForecastsList![0].rainProbability!} %"
+                                              ? "${weatherForecastDetails.dailyForecastList![0].rainProbability!} %"
                                               : "N/A",
                                           style: TextStyle(
                                             color: Colors.black,
@@ -429,7 +433,7 @@ class WeatherForecastContent extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  height: 230,
+                  height: mediaQuery.size.height * 0.25,
                   child: Card(
                     child: Stack(children: [
                       Positioned(
@@ -446,7 +450,7 @@ class WeatherForecastContent extends StatelessWidget {
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          if (weatherForecastDetails.dailyForecastsList != null)
+                          if (weatherForecastDetails.dailyForecastList != null)
                             ...buildContent()
                         ],
                       ),
@@ -454,7 +458,7 @@ class WeatherForecastContent extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  height: 30,
+                  height: mediaQuery.size.height * 0.03,
                 ),
                 TextButton(
                   onPressed: () {
@@ -477,7 +481,7 @@ class WeatherForecastContent extends StatelessWidget {
             ),
           )
         : Center(
-            child: Text("An Error Occured While Rendering Data"),
+            child: Text("Default Port Not Found"),
           );
   }
 }

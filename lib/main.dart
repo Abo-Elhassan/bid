@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:bid_app/app/core/values/app_assets.dart';
 import 'package:bid_app/app/modules/splash/bindings/splash_binding.dart';
 import 'package:bid_app/app/routes/app_pages.dart';
 import 'package:bid_app/theme/app_theme.dart';
@@ -24,9 +25,8 @@ class CustomHttpOverrides extends HttpOverrides {
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  //FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  certificate =
-      await rootBundle.load('assets/certificates/mearogateway.dpworld.com.crt');
+
+  certificate = await rootBundle.load(Assets.kCertificate);
   HttpOverrides.global = CustomHttpOverrides(certificate);
   SecurityContext(withTrustedRoots: true);
 
@@ -52,6 +52,4 @@ void main() async {
       getPages: AppPages.routes,
     ),
   );
-
-// FlutterNativeSplash.remove();
 }

@@ -26,8 +26,7 @@ import '../modules/volume/bindings/volume_binding.dart';
 import '../modules/volume/views/volume_view.dart';
 import '../modules/weather_forecast/bindings/weather_forecast_binding.dart';
 import '../modules/weather_forecast/views/weather_forecast_view.dart';
-import '../modules/weather_forecast_details/bindings/weather_forecast_details_binding.dart';
-import '../modules/weather_forecast_details/views/weather_forecast_details_view.dart';
+import '../modules/weather_forecast/views/weather_forecast_details_view.dart';
 
 part 'app_routes.dart';
 
@@ -60,7 +59,7 @@ class AppPages {
     GetPage(
       name: _Paths.WEATHER_FORECAST_DETAILS,
       page: () => const WeatherForecastDetailsView(),
-      binding: WeatherForecastDetailsBinding(),
+      binding: WeatherForecastBinding(),
     ),
     GetPage(
       name: _Paths.GDP,

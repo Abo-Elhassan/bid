@@ -1,6 +1,7 @@
 import 'package:bid_app/app/data/models/responses/filter_data_response.dart';
-import 'package:bid_app/app/data/utilities/helpers.dart';
-import 'package:bid_app/app/data/utilities/side_menu.dart';
+import 'package:bid_app/shared/page_layout.dart';
+import 'package:bid_app/shared/side_menu.dart';
+import 'package:bid_app/app/core/utilities/helpers.dart';
 import 'package:bid_app/app/modules/weather_forecast/views/weather_forecast_content.dart';
 import 'package:flutter/material.dart';
 
@@ -13,20 +14,11 @@ class WeatherForecastView extends GetView<WeatherForecastController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.refresh),
-              onPressed: () {
-                controller.fetchData(false,
-                    portName: controller.showedPort.value!.portName);
-              },
-            ),
-          ],
-        ),
-        drawer: SideMenu(Helpers.getCurrentUser().username.toString()),
-        body: controller.obx(
+    return PageLayout(
+        isDashboard: false,
+        onRefresh: () => controller.fetchData(false,
+            portName: controller.showedPort.value!.portName),
+        content: controller.obx(
           (state) {
             return RefreshIndicator(
                 onRefresh: () async {
@@ -45,8 +37,8 @@ class WeatherForecastView extends GetView<WeatherForecastController> {
           ),
           onEmpty: Center(
             child: Text(
-              "No Data Found",
-              textScaleFactor: 1,
+              "Default Port Not Found",
+              style: TextStyle(fontFamily: "Pilat Heavy", fontSize: 22),
               textAlign: TextAlign.center,
             ),
           ),

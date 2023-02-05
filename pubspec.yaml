@@ -29,6 +29,9 @@ dependencies:
   device_info_plus: ^8.0.0
   carousel_slider: ^4.2.1
   flutter_svg: ^1.1.6
+  flutter_native_splash: ^2.2.16
+  root_check: ^0.0.2+1
+  dropdown_search: ^5.0.5
 
 
 flutter_icons:

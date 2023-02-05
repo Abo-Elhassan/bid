@@ -1,5 +1,5 @@
 import 'package:bid_app/app/core/values/app_assets.dart';
-import 'package:bid_app/app/data/utilities/helpers.dart';
+import 'package:bid_app/app/core/utilities/helpers.dart';
 import 'package:bid_app/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 
@@ -48,11 +48,12 @@ class LandingView extends GetView<LandingController> {
                 height: mediaQuery.size.height * 0.01,
               ),
               Text(
-                'DP INSIGHTS & WEATHER FORECAST',
+                'BUISNESS INSIGHTS & WEATHER FORECAST DASHBOARD',
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white,
                   fontFamily: 'Pilat Heavy',
-                  fontSize: mediaQuery.size.width * 0.035,
+                  fontSize: mediaQuery.size.width * 0.03,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -66,7 +67,7 @@ class LandingView extends GetView<LandingController> {
                 ),
               ),
               SizedBox(
-                height: mediaQuery.size.height * 0.5,
+                height: mediaQuery.size.height * 0.45,
               ),
               Material(
                 color: Colors.transparent,
