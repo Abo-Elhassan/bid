@@ -190,245 +190,241 @@ class WeatherForecastContent extends StatelessWidget {
                       Padding(
                         padding:
                             EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                        child: Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 10),
-                                          child: Image.asset(
-                                            Assets.kMaxTemperature,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.03,
-                                            opacity:
-                                                const AlwaysStoppedAnimation(
-                                                    .3),
-                                            fit: BoxFit.cover,
-                                            gaplessPlayback: true,
-                                          ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 10),
+                                        child: Image.asset(
+                                          Assets.kMaxTemperature,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.03,
+                                          opacity:
+                                              const AlwaysStoppedAnimation(.3),
+                                          fit: BoxFit.cover,
+                                          gaplessPlayback: true,
                                         ),
-                                        Text(
-                                          weatherForecastDetails
-                                                      .dailyForecastList?[0]
-                                                      .maxTemperature !=
-                                                  null
-                                              ? weatherForecastDetails
-                                                  .dailyForecastList![0]
-                                                  .maxTemperature!
-                                              : "N/A",
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontFamily: 'Pilat ',
-                                            fontSize: 12,
-                                          ),
+                                      ),
+                                      Text(
+                                        weatherForecastDetails
+                                                    .dailyForecastList?[0]
+                                                    .maxTemperature !=
+                                                null
+                                            ? weatherForecastDetails
+                                                .dailyForecastList![0]
+                                                .maxTemperature!
+                                            : "N/A",
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontFamily: 'Pilat ',
+                                          fontSize: 12,
                                         ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 10),
-                                          child: Image.asset(
-                                            Assets.kMinTemperature,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.025,
-                                            opacity:
-                                                const AlwaysStoppedAnimation(
-                                                    .3),
-                                            fit: BoxFit.cover,
-                                            gaplessPlayback: true,
-                                          ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 10),
+                                        child: Image.asset(
+                                          Assets.kMinTemperature,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.025,
+                                          opacity:
+                                              const AlwaysStoppedAnimation(.3),
+                                          fit: BoxFit.cover,
+                                          gaplessPlayback: true,
                                         ),
-                                        Text(
-                                          weatherForecastDetails
-                                                      .dailyForecastList?[0]
-                                                      .minTemperature !=
-                                                  null
-                                              ? weatherForecastDetails
-                                                  .dailyForecastList![0]
-                                                  .minTemperature!
-                                              : "N/A",
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontFamily: 'Pilat ',
-                                            fontSize: 12,
-                                          ),
+                                      ),
+                                      Text(
+                                        weatherForecastDetails
+                                                    .dailyForecastList?[0]
+                                                    .minTemperature !=
+                                                null
+                                            ? weatherForecastDetails
+                                                .dailyForecastList![0]
+                                                .minTemperature!
+                                            : "N/A",
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontFamily: 'Pilat ',
+                                          fontSize: 12,
                                         ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
-                              SizedBox(
-                                height: mediaQuery.size.height * 0.01,
+                            ),
+                            SizedBox(
+                              height: mediaQuery.size.height * 0.01,
+                            ),
+                            Expanded(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Wind Direction",
+                                        style: TextStyle(
+                                          letterSpacing: 1,
+                                          color:
+                                              Color.fromRGBO(110, 110, 114, 1),
+                                          fontFamily: 'Pilat ',
+                                          fontSize: 8,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: mediaQuery.size.height * 0.01,
+                                      ),
+                                      Text(
+                                        weatherForecastDetails
+                                                    .currentWeatherDetails
+                                                    ?.windDirection !=
+                                                null
+                                            ? weatherForecastDetails
+                                                .currentWeatherDetails!
+                                                .windDirection!
+                                                .toUpperCase()
+                                            : "N/A",
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontFamily: 'Pilat ',
+                                          fontSize: 10,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Wind Speed",
+                                        style: TextStyle(
+                                          letterSpacing: 1,
+                                          color:
+                                              Color.fromRGBO(110, 110, 114, 1),
+                                          fontFamily: 'Pilat ',
+                                          fontSize: 8,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: mediaQuery.size.height * 0.01,
+                                      ),
+                                      Text(
+                                        weatherForecastDetails
+                                                    .currentWeatherDetails
+                                                    ?.windSpeed !=
+                                                null
+                                            ? weatherForecastDetails
+                                                .currentWeatherDetails!
+                                                .windSpeed!
+                                                .toUpperCase()
+                                            : "N/A",
+                                        style: TextStyle(
+                                          letterSpacing: 1,
+                                          color: Colors.black,
+                                          fontFamily: 'Pilat ',
+                                          fontSize: 10,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Humidity",
+                                        style: TextStyle(
+                                          letterSpacing: 1,
+                                          color:
+                                              Color.fromRGBO(110, 110, 114, 1),
+                                          fontFamily: 'Pilat ',
+                                          fontSize: 8,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: mediaQuery.size.height * 0.01,
+                                      ),
+                                      Text(
+                                        weatherForecastDetails
+                                                    .currentWeatherDetails
+                                                    ?.humidity !=
+                                                null
+                                            ? weatherForecastDetails
+                                                .currentWeatherDetails!
+                                                .humidity!
+                                                .toUpperCase()
+                                            : "N/A",
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontFamily: 'Pilat ',
+                                          fontSize: 10,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Rain Probability",
+                                        style: TextStyle(
+                                          letterSpacing: 1,
+                                          color:
+                                              Color.fromRGBO(110, 110, 114, 1),
+                                          fontFamily: 'Pilat ',
+                                          fontSize: 8,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: mediaQuery.size.height * 0.01,
+                                      ),
+                                      Text(
+                                        weatherForecastDetails
+                                                    .dailyForecastList?[0]
+                                                    .rainProbability !=
+                                                null
+                                            ? "${weatherForecastDetails.dailyForecastList![0].rainProbability!} %"
+                                            : "N/A",
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontFamily: 'Pilat ',
+                                          fontSize: 10,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                ],
                               ),
-                              Expanded(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          "Wind Direction",
-                                          style: TextStyle(
-                                            letterSpacing: 1,
-                                            color: Color.fromRGBO(
-                                                110, 110, 114, 1),
-                                            fontFamily: 'Pilat ',
-                                            fontSize: 8,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: mediaQuery.size.height * 0.01,
-                                        ),
-                                        Text(
-                                          weatherForecastDetails
-                                                      .currentWeatherDetails
-                                                      ?.windDirection !=
-                                                  null
-                                              ? weatherForecastDetails
-                                                  .currentWeatherDetails!
-                                                  .windDirection!
-                                                  .toUpperCase()
-                                              : "N/A",
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontFamily: 'Pilat ',
-                                            fontSize: 10,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          "Wind Speed",
-                                          style: TextStyle(
-                                            letterSpacing: 1,
-                                            color: Color.fromRGBO(
-                                                110, 110, 114, 1),
-                                            fontFamily: 'Pilat ',
-                                            fontSize: 8,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: mediaQuery.size.height * 0.01,
-                                        ),
-                                        Text(
-                                          weatherForecastDetails
-                                                      .currentWeatherDetails
-                                                      ?.windSpeed !=
-                                                  null
-                                              ? weatherForecastDetails
-                                                  .currentWeatherDetails!
-                                                  .windSpeed!
-                                                  .toUpperCase()
-                                              : "N/A",
-                                          style: TextStyle(
-                                            letterSpacing: 1,
-                                            color: Colors.black,
-                                            fontFamily: 'Pilat ',
-                                            fontSize: 10,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          "Humidity",
-                                          style: TextStyle(
-                                            letterSpacing: 1,
-                                            color: Color.fromRGBO(
-                                                110, 110, 114, 1),
-                                            fontFamily: 'Pilat ',
-                                            fontSize: 8,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: mediaQuery.size.height * 0.01,
-                                        ),
-                                        Text(
-                                          weatherForecastDetails
-                                                      .currentWeatherDetails
-                                                      ?.humidity !=
-                                                  null
-                                              ? weatherForecastDetails
-                                                  .currentWeatherDetails!
-                                                  .humidity!
-                                                  .toUpperCase()
-                                              : "N/A",
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontFamily: 'Pilat ',
-                                            fontSize: 10,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          "Rain Probability",
-                                          style: TextStyle(
-                                            letterSpacing: 1,
-                                            color: Color.fromRGBO(
-                                                110, 110, 114, 1),
-                                            fontFamily: 'Pilat ',
-                                            fontSize: 8,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: mediaQuery.size.height * 0.01,
-                                        ),
-                                        Text(
-                                          weatherForecastDetails
-                                                      .dailyForecastList?[0]
-                                                      .rainProbability !=
-                                                  null
-                                              ? "${weatherForecastDetails.dailyForecastList![0].rainProbability!} %"
-                                              : "N/A",
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontFamily: 'Pilat ',
-                                            fontSize: 10,
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      )
+                      ),
                     ]),
                   ),
                 ),

@@ -1,4 +1,4 @@
-package dpw.bid_app
+package com.dpw.bid
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -25,6 +25,44 @@ class _WidgetSliderState extends State<WidgetSlider> {
     super.initState();
   }
 
+  Widget buildGredientLine(MediaQueryData mediaQuery, ThemeData theme) {
+    return Padding(
+      padding: EdgeInsets.only(
+        top: mediaQuery.size.height * 0.008,
+        bottom: mediaQuery.size.height * 0.03,
+      ),
+      child: SizedBox(
+        width: double.infinity,
+        height: 2,
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  theme.colorScheme.primary.withOpacity(0.0),
+                  theme.colorScheme.primary.withOpacity(0.1),
+                  theme.colorScheme.primary.withOpacity(0.5),
+                  theme.colorScheme.primary,
+                  theme.colorScheme.primary.withOpacity(0.5),
+                  theme.colorScheme.primary.withOpacity(0.1),
+                  theme.colorScheme.primary.withOpacity(0.0),
+                ],
+                stops: const [
+                  0.1,
+                  0.2,
+                  0.3,
+                  0.5,
+                  0.7,
+                  0.8,
+                  0.9,
+                ]),
+          ),
+        ),
+      ),
+    );
+  }
+
   List<Widget> buildDailyWeatherWidgets(MediaQueryData mediaQuery) {
     return widget.dailyForecastList
         .map(
@@ -145,7 +183,11 @@ class _WidgetSliderState extends State<WidgetSlider> {
                             ],
                           ),
                           SizedBox(
-                            height: 50,
+                            height: 25,
+                          ),
+                          buildGredientLine(
+                            MediaQuery.of(context),
+                            Theme.of(context),
                           ),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
