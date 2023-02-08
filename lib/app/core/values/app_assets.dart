@@ -22,7 +22,7 @@ class Assets {
 
   static const String kBackground = "${_kImages}background.png";
   static const String kEarthLines = "${_kImages}earth_icon.png";
-  static const String kLogin = "${_kImages}login.png";
-  static const String kStart = "${_kImages}start.png";
+  static const String kLogin = "${_kImages}loginBtn.png";
+  static const String kStart = "${_kImages}startBtn.png";
   static const String kDpLogo = "${_kImages}dp_logo.png";
 }

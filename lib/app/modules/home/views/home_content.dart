@@ -33,16 +33,16 @@ class HomeContent extends StatefulWidget {
 }
 
 class _HomeContentState extends State<HomeContent> {
-  final localStorage = GetStorage();
+  ScrollController _scrollController = ScrollController();
   late WidgetDataResponse widgetsData = WidgetDataResponse();
   late FilterDataResponse filterData = FilterDataResponse();
   StringBuffer selectedRegions = StringBuffer();
-  final ScrollController scrollController = ScrollController();
+
   late List<Country> visibleCountryList = <Country>[];
   late List<Port> visiblePortList = <Port>[];
   late List<Terminal> visibleTerminalList = <Terminal>[];
   late List<Operator> visibleOperatorList = <Operator>[];
-
+  late int renderType = 0;
   bool isLoading = false;
   bool isRegionChanged = false;
   bool isDataUpdated = false;
@@ -363,6 +363,7 @@ class _HomeContentState extends State<HomeContent> {
   void refreshData() async {
     setState(() {
       isLoading = true;
+      renderType = 0;
     });
 
     try {
@@ -374,11 +375,33 @@ class _HomeContentState extends State<HomeContent> {
         } else {
           await getWidgetData(prepareWidgetDataBody(true));
           getSelectedRegion();
-          setState(() {
-            isLoading = false;
-          });
-          return;
         }
+      } else {
+        await Helpers.dialog(Icons.wifi_off_outlined, Colors.red,
+            'Please check Your Netowork Connection');
+      }
+      setState(() {
+        isLoading = false;
+      });
+    } catch (error) {
+      setState(() {
+        isLoading = false;
+      });
+      await Helpers.dialog(Icons.error, Colors.red, 'An Error Occured!!');
+    }
+  }
+
+  void filterFromMap(
+      WidgetDataRequest widgetDatarequest, int sentRenderType) async {
+    setState(() {
+      isLoading = true;
+      renderType = sentRenderType;
+    });
+
+    try {
+      if (await Helpers.checkConnectivity()) {
+        await getWidgetData(widgetDatarequest);
+        getSelectedRegion();
       } else {
         await Helpers.dialog(Icons.wifi_off_outlined, Colors.red,
             'Please check Your Netowork Connection');
@@ -613,7 +636,8 @@ class _HomeContentState extends State<HomeContent> {
                             style: TextStyle(
                               color: Colors.black,
                               fontFamily: 'Pilat Heavy',
-                              fontSize: 14,
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.04,
                             ),
                           ),
                           Divider(
@@ -635,7 +659,8 @@ class _HomeContentState extends State<HomeContent> {
                               style: TextStyle(
                                 color: Colors.black,
                                 fontFamily: 'Pilat Demi',
-                                fontSize: 14,
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.04,
                               ),
                             ),
                             trailing: Icon(Icons.arrow_drop_down),
@@ -662,7 +687,9 @@ class _HomeContentState extends State<HomeContent> {
                                   title: Text(
                                     "Select All",
                                     style: TextStyle(
-                                      fontSize: 12,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.035,
                                     ),
                                   ),
                                 ),
@@ -688,7 +715,8 @@ class _HomeContentState extends State<HomeContent> {
                               style: TextStyle(
                                 color: Colors.black,
                                 fontFamily: 'Pilat Demi',
-                                fontSize: 14,
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.04,
                               ),
                             ),
                             trailing: Icon(Icons.arrow_drop_down),
@@ -715,7 +743,9 @@ class _HomeContentState extends State<HomeContent> {
                                   title: Text(
                                     "Select All",
                                     style: TextStyle(
-                                      fontSize: 12,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.035,
                                     ),
                                   ),
                                 ),
@@ -739,7 +769,8 @@ class _HomeContentState extends State<HomeContent> {
                               style: TextStyle(
                                 color: Colors.black,
                                 fontFamily: 'Pilat Demi',
-                                fontSize: 14,
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.04,
                               ),
                             ),
                             trailing: Icon(Icons.arrow_drop_down),
@@ -766,7 +797,9 @@ class _HomeContentState extends State<HomeContent> {
                                   title: Text(
                                     "Select All",
                                     style: TextStyle(
-                                      fontSize: 12,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.035,
                                     ),
                                   ),
                                 ),
@@ -791,7 +824,8 @@ class _HomeContentState extends State<HomeContent> {
                               style: TextStyle(
                                 color: Colors.black,
                                 fontFamily: 'Pilat Demi',
-                                fontSize: 14,
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.04,
                               ),
                             ),
                             trailing: Icon(Icons.arrow_drop_down),
@@ -818,7 +852,9 @@ class _HomeContentState extends State<HomeContent> {
                                   title: Text(
                                     "Select All",
                                     style: TextStyle(
-                                      fontSize: 12,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.035,
                                     ),
                                   ),
                                 ),
@@ -845,7 +881,8 @@ class _HomeContentState extends State<HomeContent> {
                               style: TextStyle(
                                 color: Colors.black,
                                 fontFamily: 'Pilat Demi',
-                                fontSize: 14,
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.04,
                               ),
                             ),
                             trailing: Icon(Icons.arrow_drop_down),
@@ -872,7 +909,9 @@ class _HomeContentState extends State<HomeContent> {
                                   title: Text(
                                     "Select All",
                                     style: TextStyle(
-                                      fontSize: 12,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.035,
                                     ),
                                   ),
                                 ),
@@ -898,7 +937,9 @@ class _HomeContentState extends State<HomeContent> {
                                   style: TextStyle(
                                     color: Colors.red,
                                     fontFamily: 'Pilat Demi',
-                                    fontSize: 14,
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.04,
                                   ),
                                 ),
                               ),
@@ -925,7 +966,9 @@ class _HomeContentState extends State<HomeContent> {
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'Pilat Demi',
-                                    fontSize: 14,
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.04,
                                   ),
                                 ),
                               )
@@ -983,7 +1026,7 @@ class _HomeContentState extends State<HomeContent> {
           title: Text(
             reg.regionName!,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: MediaQuery.of(context).size.width * 0.04,
             ),
           ),
         );
@@ -1033,7 +1076,7 @@ class _HomeContentState extends State<HomeContent> {
           title: Text(
             con.countryName!,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: MediaQuery.of(context).size.width * 0.04,
             ),
           ),
         );
@@ -1084,7 +1127,7 @@ class _HomeContentState extends State<HomeContent> {
           title: Text(
             por.portName!,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: MediaQuery.of(context).size.width * 0.04,
             ),
           ),
         );
@@ -1137,7 +1180,9 @@ class _HomeContentState extends State<HomeContent> {
           ),
           title: Text(
             ter.terminalName!,
-            style: TextStyle(fontSize: 14),
+            style: TextStyle(
+              fontSize: MediaQuery.of(context).size.width * 0.04,
+            ),
           ),
         );
       }).toList(),
@@ -1201,7 +1246,7 @@ class _HomeContentState extends State<HomeContent> {
           title: Text(
             op.operatorName!,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: MediaQuery.of(context).size.width * 0.04,
             ),
           ),
         );
@@ -1246,10 +1291,36 @@ class _HomeContentState extends State<HomeContent> {
     final theme = Theme.of(context);
     final mediaQuery = MediaQuery.of(context);
     return Scaffold(
+        floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              _scrollController.animateTo(
+                0,
+                duration: Duration(milliseconds: 500),
+                curve: Curves.linear,
+              );
+            },
+            child: Icon(Icons.arrow_upward)),
         appBar: AppBar(
+          leading: Builder(
+            builder: (BuildContext context) {
+              return IconButton(
+                icon: Icon(
+                  Icons.menu,
+                  size: MediaQuery.of(context).size.width * 0.06,
+                ),
+                onPressed: () {
+                  Scaffold.of(context).openDrawer();
+                },
+                tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+              );
+            },
+          ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.refresh),
+              icon: Icon(
+                Icons.refresh,
+                size: MediaQuery.of(context).size.width * 0.06,
+              ),
               onPressed: () async {
                 refreshData();
               },
@@ -1262,12 +1333,12 @@ class _HomeContentState extends State<HomeContent> {
         body: Stack(children: [
           Positioned(
             right: -10,
-            top: 150,
+            top: 100,
             child: RotatedBox(
               quarterTurns: -1,
               child: Image.asset(
                 Assets.kEarthLines,
-                height: 300,
+                height: MediaQuery.of(context).size.height * 0.45,
                 opacity: const AlwaysStoppedAnimation(.5),
                 fit: BoxFit.cover,
                 gaplessPlayback: true,
@@ -1278,115 +1349,135 @@ class _HomeContentState extends State<HomeContent> {
               onRefresh: () async {
                 refreshData();
               },
-              child: Visibility(
-                  visible: isLoading == false,
-                  replacement: Helpers.loadingIndicator(),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: mediaQuery.size.width * 0.05,
-                      vertical: mediaQuery.size.height * 0.01,
-                    ),
-                    child: isFilterDataFetched() && isWidgetsDataFetched()
-                        ? Column(
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: mediaQuery.size.width * 0.05,
+                  vertical: mediaQuery.size.height * 0.01,
+                ),
+                child: isFilterDataFetched() && isWidgetsDataFetched()
+                    ? Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    '${selectedRegions.toString()}',
-                                    style: TextStyle(
-                                      color: theme.colorScheme.primary,
-                                      fontFamily: 'Pilat Heavy',
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                  IconButton(
-                                      padding: EdgeInsets.zero,
-                                      visualDensity:
-                                          VisualDensity(horizontal: -4),
-                                      onPressed: () => dialog(),
-                                      icon: const Icon(Icons.manage_search))
-                                ],
-                              ),
-                              buildGredientLine(
-                                mediaQuery,
-                                theme,
-                              ),
-                              Expanded(
-                                child: ListView(
-                                  padding: EdgeInsets.zero,
-                                  controller: scrollController,
-                                  children: [
-                                    MapChart(filterData.countryList!),
-                                    SizedBox(
-                                      height: 50,
-                                    ),
-                                    FilteredBIDChartView(
-                                      widgetsData.bidWidgetDetails!,
-                                      "GDP",
-                                      "GDP",
-                                    ),
-                                    SizedBox(
-                                      height: 50,
-                                    ),
-                                    FilteredBIDChartView(
-                                      widgetsData.bidWidgetDetails!,
-                                      "GDPGR",
-                                      "GDPGR",
-                                    ),
-                                    SizedBox(
-                                      height: 50,
-                                    ),
-                                    FilteredBIDChartView(
-                                      widgetsData.bidWidgetDetails!,
-                                      "POP",
-                                      "POPULATION",
-                                    ),
-                                    SizedBox(
-                                      height: 50,
-                                    ),
-                                    FilteredBIDChartView(
-                                      widgetsData.bidWidgetDetails!,
-                                      "VOL",
-                                      "VOLUME",
-                                    ),
-                                    SizedBox(
-                                      height: 50,
-                                    ),
-                                    BIDChartView(
-                                      widgetsData.bidWidgetDetails!,
-                                      filterData,
-                                      "CAPACITY",
-                                      "CAPACITY",
-                                    ),
-                                    SizedBox(
-                                      height: 50,
-                                    ),
-                                    BIDChartView(
-                                      widgetsData.bidWidgetDetails!,
-                                      filterData,
-                                      "DEVELOPMENT",
-                                      "DEVELOPMENT",
-                                    ),
-                                    SizedBox(
-                                      height: 50,
-                                    ),
-                                    NatureOfInvlovementView(
-                                      widgetsData.bidWidgetDetails!,
-                                    ),
-                                    SizedBox(
-                                      height: 50,
-                                    ),
-                                  ],
+                              Text(
+                                '${selectedRegions.toString()}',
+                                style: TextStyle(
+                                  color: theme.colorScheme.primary,
+                                  fontFamily: 'Pilat Heavy',
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.04,
                                 ),
                               ),
+                              IconButton(
+                                  padding: EdgeInsets.zero,
+                                  visualDensity: VisualDensity(horizontal: -4),
+                                  onPressed: () => dialog(),
+                                  icon: Icon(
+                                    Icons.manage_search,
+                                    size: MediaQuery.of(context).size.width *
+                                        0.07,
+                                  ))
                             ],
-                          )
-                        : Center(
-                            child:
-                                Text("An Error Occured While Rendering Data")),
-                  )))
+                          ),
+                          buildGredientLine(
+                            mediaQuery,
+                            theme,
+                          ),
+                          Expanded(
+                            child: ListView(
+                              padding: EdgeInsets.zero,
+                              controller: _scrollController,
+                              children: [
+                                MapChart(filterFromMap, filterData.countryList!,
+                                    filterData),
+                                SizedBox(
+                                  height: 50,
+                                ),
+                                Visibility(
+                                  visible: isLoading == false,
+                                  replacement: Helpers.loadingIndicator(),
+                                  child: Column(
+                                    children: [
+                                      if (renderType == 0 || renderType == 1)
+                                        FilteredBIDChartView(
+                                          widgetsData.bidWidgetDetails!,
+                                          "GDP",
+                                          "GDP",
+                                        ),
+                                      if (renderType == 0 || renderType == 1)
+                                        SizedBox(
+                                          height: 50,
+                                        ),
+                                      if (renderType == 0 || renderType == 1)
+                                        FilteredBIDChartView(
+                                          widgetsData.bidWidgetDetails!,
+                                          "GDPGR",
+                                          "GDPGR",
+                                        ),
+                                      if (renderType == 0 || renderType == 1)
+                                        SizedBox(
+                                          height: 50,
+                                        ),
+                                      if (renderType == 0 || renderType == 1)
+                                        FilteredBIDChartView(
+                                          widgetsData.bidWidgetDetails!,
+                                          "POP",
+                                          "POPULATION",
+                                        ),
+                                      if (renderType == 0 || renderType == 1)
+                                        SizedBox(
+                                          height: 50,
+                                        ),
+                                      if (renderType == 2 || renderType == 0)
+                                        FilteredBIDChartView(
+                                          widgetsData.bidWidgetDetails!,
+                                          "VOL",
+                                          "VOLUME",
+                                        ),
+                                      if (renderType == 2 || renderType == 0)
+                                        SizedBox(
+                                          height: 50,
+                                        ),
+                                      if (renderType == 2 || renderType == 0)
+                                        BIDChartView(
+                                          widgetsData.bidWidgetDetails!,
+                                          filterData,
+                                          "CAPACITY",
+                                          "CAPACITY",
+                                        ),
+                                      if (renderType == 2 || renderType == 0)
+                                        SizedBox(
+                                          height: 50,
+                                        ),
+                                      if (renderType == 2 || renderType == 0)
+                                        BIDChartView(
+                                          widgetsData.bidWidgetDetails!,
+                                          filterData,
+                                          "DEVELOPMENT",
+                                          "DEVELOPMENT",
+                                        ),
+                                      if (renderType == 2 || renderType == 0)
+                                        SizedBox(
+                                          height: 50,
+                                        ),
+                                      if (renderType == 2 || renderType == 0)
+                                        NatureOfInvlovementView(
+                                          widgetsData.bidWidgetDetails!,
+                                        ),
+                                      SizedBox(
+                                        height: 50,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
+                    : Center(child: Text("")),
+              ))
         ]));
   }
 }

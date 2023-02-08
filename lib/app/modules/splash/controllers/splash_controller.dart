@@ -25,13 +25,13 @@ class SplashController extends GetxController {
     Future.delayed(Duration(seconds: 4), () async {
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
       if (Platform.isAndroid) {
-        FlutterJailbreakDetection.developerMode.then((value) {
-          if (value || !(androidInfo.isPhysicalDevice)) {
-            Get.offAllNamed(Routes.ERROR);
-          } else {
-            Get.offAllNamed(Routes.LANDING);
-          }
-        });
+        // FlutterJailbreakDetection.developerMode.then((value) {
+        //   if (value || !(androidInfo.isPhysicalDevice)) {
+        //     Get.offAllNamed(Routes.ERROR);
+        //   } else {
+        Get.offAllNamed(Routes.LANDING);
+        //   }
+        // });
       } else if (Platform.isIOS) {
         IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
 
@@ -44,41 +44,41 @@ class SplashController extends GetxController {
         });
       }
 
-      RootCheck.isRooted.then((value) {
-        if (value != null && value) {
-          exit(0);
-        }
-      });
+      // RootCheck.isRooted.then((value) {
+      //   if (value != null && value) {
+      //     Get.offAllNamed(Routes.ERROR);
+      //   }
+      // });
 
-      RootCheck.isRootedWithBusyBoxCheck.then((value) {
-        if (value != null && value) {
-          exit(0);
-        }
-      });
+      // RootCheck.isRootedWithBusyBoxCheck.then((value) {
+      //   if (value != null && value) {
+      //     Get.offAllNamed(Routes.ERROR);
+      //   }
+      // });
 
-      RootCheck.checkForRootNative.then((value) {
-        if (value != null && value) {
-          exit(0);
-        }
-      });
+      // RootCheck.checkForRootNative.then((value) {
+      //   if (value != null && value) {
+      //     Get.offAllNamed(Routes.ERROR);
+      //   }
+      // });
 
-      RootCheck.detectPotentiallyDangerousApps.then((value) {
-        if (value != null && value) {
-          exit(0);
-        }
-      });
+      // RootCheck.detectPotentiallyDangerousApps.then((value) {
+      //   if (value != null && value) {
+      //     Get.offAllNamed(Routes.ERROR);
+      //   }
+      // });
 
-      RootCheck.detectTestKeys.then((value) {
-        if (value != null && value) {
-          exit(0);
-        }
-      });
+      // RootCheck.detectTestKeys.then((value) {
+      //   if (value != null && value) {
+      //     Get.offAllNamed(Routes.ERROR);
+      //   }
+      // });
 
-      RootCheck.checkForDangerousProps.then((value) {
-        if (value != null && value) {
-          exit(0);
-        }
-      });
+      // RootCheck.checkForDangerousProps.then((value) {
+      //   if (value != null && value) {
+      //     Get.offAllNamed(Routes.ERROR);
+      //   }
+      // });
     });
   }
 }

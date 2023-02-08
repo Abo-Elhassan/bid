@@ -51,7 +51,7 @@ class _PageLayoutState extends State<PageLayout> {
                   quarterTurns: -1,
                   child: Image.asset(
                     Assets.kEarthLines,
-                    height: 300,
+                    height: MediaQuery.of(context).size.height * 0.45,
                     opacity: const AlwaysStoppedAnimation(.5),
                     fit: BoxFit.cover,
                     gaplessPlayback: true,

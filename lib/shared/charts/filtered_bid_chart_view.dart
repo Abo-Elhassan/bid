@@ -26,8 +26,8 @@ class FilteredBIDChartViewState extends State<FilteredBIDChartView> {
   late ZoomPanBehavior _zoomPanBehavior;
   late TooltipBehavior _tooltip;
   late List<BidWidgetDetails> widgetDetails = <BidWidgetDetails>[];
-  final yearList = <int>[];
-  late int showedYear = yearList[0];
+  final yearList = <String>[];
+  late String showedYear = yearList[0];
   late List<BidWidgetDetails> showedWidgets = widgetDetails;
 
   late BidWidgetDetails maxItem = BidWidgetDetails();
@@ -148,13 +148,17 @@ class FilteredBIDChartViewState extends State<FilteredBIDChartView> {
   void initState() {
     getWidgetDetails();
     if (widgetDetails.isNotEmpty) {
-      widgetDetails.distinct(((wid) => wid.biYear)).toList().forEach((item) {
-        yearList.add(item.biYear);
+      widgetDetails
+          .distinct(((wid) => wid.biYearDisplay.toString()))
+          .toList()
+          .forEach((item) {
+        yearList.add(item.biYearDisplay.toString());
       });
       yearList.sort();
       showedYear = yearList[0];
-      showedWidgets =
-          widgetDetails.where((wid) => wid.biYear == yearList[0]).toList();
+      showedWidgets = widgetDetails
+          .where((wid) => wid.biYearDisplay == yearList[0])
+          .toList();
       setChartXvalue();
       prepareYAxis();
 
@@ -231,7 +235,7 @@ class FilteredBIDChartViewState extends State<FilteredBIDChartView> {
             ),
           ),
           IconButton(
-              padding: EdgeInsets.zero,
+              padding: EdgeInsets.only(right: 20),
               visualDensity: VisualDensity(horizontal: -4, vertical: -4),
               alignment: Alignment.centerRight,
               onPressed: () {
@@ -257,7 +261,7 @@ class FilteredBIDChartViewState extends State<FilteredBIDChartView> {
                   default:
                 }
                 Get.toNamed(pageRoute, arguments: {
-                  "bidWidgetDetails": widgetDetails,
+                  "bidWidgetDetails": widget.bidWidgetDetails,
                   "chartType": widget.chartType,
                   "chartTitle": widget.chartTitle,
                   "chartData": data,
@@ -286,7 +290,7 @@ class FilteredBIDChartViewState extends State<FilteredBIDChartView> {
               style: TextStyle(
                 color: theme.colorScheme.primary,
                 fontFamily: 'Pilat Heavy',
-                fontSize: 16,
+                fontSize: MediaQuery.of(context).size.width * 0.045,
               ),
             ),
             widgetDetails.isNotEmpty
@@ -297,7 +301,7 @@ class FilteredBIDChartViewState extends State<FilteredBIDChartView> {
                       Icons.calendar_month,
                       color: Color.fromRGBO(50, 48, 190, 1),
                     ),
-                    items: yearList.map<DropdownMenuItem<int>>((year) {
+                    items: yearList.map<DropdownMenuItem<String>>((year) {
                       return DropdownMenuItem(
                         value: year,
                         child: Padding(
@@ -307,7 +311,8 @@ class FilteredBIDChartViewState extends State<FilteredBIDChartView> {
                             style: TextStyle(
                               color: Color.fromRGBO(50, 48, 190, 1),
                               fontFamily: 'Pilat Heavy',
-                              fontSize: 16,
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.045,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -318,7 +323,7 @@ class FilteredBIDChartViewState extends State<FilteredBIDChartView> {
                       setState(() {
                         showedYear = newValue!;
                         showedWidgets = widgetDetails
-                            .where((wid) => wid.biYear == newValue)
+                            .where((wid) => wid.biYearDisplay == newValue)
                             .toList();
 
                         data.clear();
@@ -332,7 +337,7 @@ class FilteredBIDChartViewState extends State<FilteredBIDChartView> {
         ),
       ),
       Container(
-        height: 400,
+        height: MediaQuery.of(context).size.height * 0.5,
         width: double.infinity,
         child: Card(
           child: Padding(

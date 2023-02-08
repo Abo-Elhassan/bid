@@ -6,11 +6,11 @@ class PopulationController extends GetxController {
   final routeArguments = Get.arguments as Map<String, dynamic>;
   late List<BidWidgetDetails> widgetDetails =
       routeArguments['bidWidgetDetails'];
-  late List<BidWidgetDetails> showedWidgets = widgetDetails;
+
   late String chartType = routeArguments['chartType'];
   late String chartTitle = routeArguments['chartTitle'];
   late List<ChartData> data = routeArguments['chartData'];
-  late List<int> yearList = routeArguments['yearList'];
+  late List<String> yearList = routeArguments['yearList'];
   late double minVal = routeArguments['minVal'];
   late double maxVal = routeArguments['maxVal'];
   late double? interval = routeArguments['interval'];

@@ -33,31 +33,31 @@ class LoginController extends GetxController {
       textAlign: TextAlign.start,
       textAlignVertical: TextAlignVertical.bottom,
       cursorColor: Colors.black,
-      style: const TextStyle(
+      style: TextStyle(
         height: 2,
         color: Colors.black,
         fontFamily: 'Pilat Demi',
-        fontSize: 18,
+        fontSize: mediaQuery.size.width * 0.04,
         fontWeight: FontWeight.bold,
       ),
       decoration: InputDecoration(
         errorMaxLines: 2,
-        hintStyle: const TextStyle(
+        hintStyle: TextStyle(
           color: Color.fromRGBO(58, 58, 66, 1),
           fontFamily: 'Pilat Demi',
           fontWeight: FontWeight.bold,
-          fontSize: 14,
+          fontSize: mediaQuery.size.width * 0.04,
         ),
-        labelStyle: const TextStyle(
+        labelStyle: TextStyle(
           color: Color.fromRGBO(15, 15, 25, 1),
           fontFamily: 'Pilat Demi',
-          fontSize: 18,
+          fontSize: mediaQuery.size.width * 0.05,
           fontWeight: FontWeight.bold,
         ),
-        floatingLabelStyle: const TextStyle(
+        floatingLabelStyle: TextStyle(
           color: Color.fromRGBO(110, 110, 114, 1),
           fontFamily: 'Pilat Demi',
-          fontSize: 18,
+          fontSize: mediaQuery.size.width * 0.05,
           fontWeight: FontWeight.bold,
         ),
         contentPadding: const EdgeInsets.only(bottom: 10),
@@ -71,6 +71,7 @@ class LoginController extends GetxController {
                       ? Icons.visibility_off
                       : Icons.visibility,
                   color: Colors.black,
+                  size: mediaQuery.size.width * 0.07,
                 ),
                 onPressed: () {
                   // Update the state i.e. toogle the state of passwordVisible variable
@@ -135,7 +136,7 @@ class LoginController extends GetxController {
     } catch (error) {
       isloading.value = false;
 
-      await Helpers.dialog(Icons.error, Colors.red, error.toString());
+      await Helpers.dialog(Icons.error, Colors.red, "Internal Error Occured");
     }
   }
 }

@@ -11,6 +11,7 @@ class SideMenu extends StatelessWidget {
     final mediaQuery = MediaQuery.of(context);
     final theme = Theme.of(context);
     return Drawer(
+      width: MediaQuery.of(context).size.width * 0.7,
       child: Container(
         padding: EdgeInsets.only(
           top: mediaQuery.size.height * 0.1,
@@ -43,10 +44,10 @@ class SideMenu extends StatelessWidget {
                 Text(
                   username,
                   textAlign: TextAlign.end,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white,
                     fontFamily: 'Pilat Heavy',
-                    fontSize: 16,
+                    fontSize: mediaQuery.size.width * 0.04,
                   ),
                 )
               ],
@@ -67,13 +68,13 @@ class SideMenu extends StatelessWidget {
                 Get.offNamed(Routes.HOME);
                 Scaffold.of(context).openEndDrawer();
               },
-              child: const Text(
+              child: Text(
                 "DASHBOARD",
                 textAlign: TextAlign.end,
                 style: TextStyle(
                   color: Colors.white,
                   fontFamily: 'Pilat Heavy',
-                  fontSize: 16,
+                  fontSize: mediaQuery.size.width * 0.035,
                 ),
               ),
             ),
@@ -91,13 +92,13 @@ class SideMenu extends StatelessWidget {
                 Get.offNamed(Routes.WEATHER_FORECAST);
                 Scaffold.of(context).openEndDrawer();
               },
-              child: const Text(
+              child: Text(
                 "WEATHER FORECAST",
                 textAlign: TextAlign.end,
                 style: TextStyle(
                   color: Colors.white,
                   fontFamily: 'Pilat Heavy',
-                  fontSize: 16,
+                  fontSize: mediaQuery.size.width * 0.035,
                 ),
               ),
             ),
@@ -117,12 +118,12 @@ class SideMenu extends StatelessWidget {
                     Get.offNamed(Routes.LOGIN);
                     Scaffold.of(context).openEndDrawer();
                   },
-                  child: const Text(
+                  child: Text(
                     "LOG OUT",
                     style: TextStyle(
                       color: Colors.white,
                       fontFamily: 'Pilat Heavy',
-                      fontSize: 16,
+                      fontSize: mediaQuery.size.width * 0.035,
                     ),
                   ),
                 ),

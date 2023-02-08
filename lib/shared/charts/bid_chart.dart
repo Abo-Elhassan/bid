@@ -12,7 +12,7 @@ class BIDChart extends StatefulWidget {
   final String chartTitle;
   late List<BidWidgetDetails> showedWidgets;
   late List<ChartData> data;
-  final List<int> yearList;
+  final List<String> yearList;
   final double minVal;
   final double maxVal;
   final double? interval;

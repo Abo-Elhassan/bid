@@ -15,11 +15,9 @@ class VolumeView extends GetView<VolumeController> {
       ),
       backgroundColor: Colors.white,
       body: FilteredBIDChart(
-        widgetDetails: controller.widgetDetails,
+        bidWidgetDetails: controller.widgetDetails,
         chartType: controller.chartType,
         chartTitle: controller.chartTitle,
-        showedWidgets: controller.showedWidgets,
-        data: controller.data,
         yearList: controller.yearList,
         minVal: controller.minVal,
         maxVal: controller.maxVal,

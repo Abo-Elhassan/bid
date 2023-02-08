@@ -21,7 +21,7 @@ class LandingView extends GetView<LandingController> {
           height: double.infinity,
           decoration: const BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage(Assets.kBackground), fit: BoxFit.cover)),
+                  image: AssetImage(Assets.kBackground), fit: BoxFit.fill)),
         ),
         Container(
           decoration: const BoxDecoration(
@@ -36,7 +36,7 @@ class LandingView extends GetView<LandingController> {
           child: Column(
             children: [
               SizedBox(
-                height: mediaQuery.size.height * 0.1,
+                height: mediaQuery.size.height * 0.06,
               ),
               Image.asset(
                 Assets.kDpLogo,
@@ -67,7 +67,7 @@ class LandingView extends GetView<LandingController> {
                 ),
               ),
               SizedBox(
-                height: mediaQuery.size.height * 0.45,
+                height: mediaQuery.size.height * 0.47,
               ),
               Material(
                 color: Colors.transparent,
@@ -77,7 +77,7 @@ class LandingView extends GetView<LandingController> {
                   borderRadius: BorderRadius.circular(30),
                   child: Image.asset(
                     Assets.kStart,
-                    height: mediaQuery.size.width * 0.17,
+                    height: mediaQuery.size.height * 0.08,
                     fit: BoxFit.cover,
                     gaplessPlayback: true,
                   ),

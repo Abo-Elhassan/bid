@@ -30,7 +30,7 @@ class BIDChartState extends State<BIDChartView> {
   late ZoomPanBehavior _zoomPanBehavior;
   late TooltipBehavior _tooltip;
   late List<BidWidgetDetails> widgetDetails = <BidWidgetDetails>[];
-  final yearList = <int>[];
+  final yearList = <String>[];
 
   late List<BidWidgetDetails> showedWidgets = widgetDetails;
 
@@ -124,12 +124,16 @@ class BIDChartState extends State<BIDChartView> {
   void initState() {
     getWidgetDetails();
     if (widgetDetails.isNotEmpty) {
-      widgetDetails.distinct(((wid) => wid.biYear)).toList().forEach((item) {
-        yearList.add(item.biYear);
+      widgetDetails
+          .distinct(((wid) => wid.biYearDisplay.toString()))
+          .toList()
+          .forEach((item) {
+        yearList.add(item.biYearDisplay.toString());
       });
 
-      showedWidgets =
-          widgetDetails.where((wid) => wid.biYear == yearList[0]).toList();
+      showedWidgets = widgetDetails
+          .where((wid) => wid.biYearDisplay == yearList[0])
+          .toList();
       setChartXvalue();
       prepareYAxis();
 
@@ -197,7 +201,7 @@ class BIDChartState extends State<BIDChartView> {
                 ]),
           ),
           IconButton(
-              padding: EdgeInsets.zero,
+              padding: EdgeInsets.only(right: 10),
               visualDensity: VisualDensity(horizontal: -4, vertical: -4),
               alignment: Alignment.centerRight,
               onPressed: () {
@@ -244,7 +248,7 @@ class BIDChartState extends State<BIDChartView> {
               style: TextStyle(
                 color: theme.colorScheme.primary,
                 fontFamily: 'Pilat Heavy',
-                fontSize: 16,
+                fontSize: MediaQuery.of(context).size.width * 0.045,
               ),
             ),
           ],
@@ -254,7 +258,7 @@ class BIDChartState extends State<BIDChartView> {
         height: 10,
       ),
       Container(
-        height: 400,
+        height: MediaQuery.of(context).size.height * 0.5,
         width: double.infinity,
         child: Card(
           child: Padding(
