@@ -153,55 +153,58 @@ class BIDChartState extends State<BIDChartView> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: <Widget>[
           Expanded(
-            child: SfCartesianChart(
-                // enableAxisAnimation: true,
-                isTransposed: false,
-                zoomPanBehavior: _zoomPanBehavior,
-                primaryXAxis: CategoryAxis(
-                  labelRotation: -90,
-                  majorGridLines: MajorGridLines(width: 0),
-                  axisLine: AxisLine(width: 0),
-                  interval: 1,
-                  maximumLabels: 8,
-                  visibleMinimum: 0,
-                  visibleMaximum: widgetDetails.length > 8 ? 8 : null,
-                ),
-                primaryYAxis: NumericAxis(
-                  majorGridLines: MajorGridLines(width: 0),
-                  //Hide the axis line of x-axis
-                  axisLine: AxisLine(width: 0),
-                  edgeLabelPlacement: EdgeLabelPlacement.none,
-                  decimalPlaces: 1,
-                  minimum: minVal,
-                  maximum: maxVal,
-                  interval: interval,
-                  labelFormat: ' {value} ${widgetDetails[0].biUnit}',
-                ),
-                tooltipBehavior: _tooltip,
-                series: <ChartSeries<ChartData, String>>[
-                  ColumnSeries<ChartData, String>(
-                      // dataLabelSettings: DataLabelSettings(
-                      //   alignment: ChartAlignment.center,
-                      //   labelAlignment: ChartDataLabelAlignment.outer,
-                      //   labelPosition: ChartDataLabelPosition.outside,
+            child: Padding(
+              padding: EdgeInsets.only(right: 20),
+              child: SfCartesianChart(
+                  // enableAxisAnimation: true,
+                  isTransposed: false,
+                  zoomPanBehavior: _zoomPanBehavior,
+                  primaryXAxis: CategoryAxis(
+                    labelRotation: -90,
+                    majorGridLines: MajorGridLines(width: 0),
+                    axisLine: AxisLine(width: 0),
+                    interval: 1,
+                    maximumLabels: 8,
+                    visibleMinimum: 0,
+                    visibleMaximum: widgetDetails.length > 8 ? 8 : null,
+                  ),
+                  primaryYAxis: NumericAxis(
+                    majorGridLines: MajorGridLines(width: 0),
+                    //Hide the axis line of x-axis
+                    axisLine: AxisLine(width: 0),
+                    edgeLabelPlacement: EdgeLabelPlacement.none,
+                    decimalPlaces: 1,
+                    minimum: minVal,
+                    maximum: maxVal,
+                    interval: interval,
+                    labelFormat: ' {value} ${widgetDetails[0].biUnit}',
+                  ),
+                  tooltipBehavior: _tooltip,
+                  series: <ChartSeries<ChartData, String>>[
+                    ColumnSeries<ChartData, String>(
+                        // dataLabelSettings: DataLabelSettings(
+                        //   alignment: ChartAlignment.center,
+                        //   labelAlignment: ChartDataLabelAlignment.outer,
+                        //   labelPosition: ChartDataLabelPosition.outside,
 
-                      //   textStyle: TextStyle(
-                      //     color: Colors.black,
-                      //     fontFamily: 'Pilat',
-                      //     fontSize: 14,
-                      //   ),
-                      //   // Renders the data label
-                      //   isVisible: true,
-                      // ),
-                      dataSource: data,
-                      xValueMapper: (ChartData data, _) => data.x,
-                      yValueMapper: (ChartData data, _) => data.y,
-                      name: widget.chartTitle,
-                      color: Colors.indigo[900]),
-                ]),
+                        //   textStyle: TextStyle(
+                        //     color: Colors.black,
+                        //     fontFamily: 'Pilat',
+                        //     fontSize: 14,
+                        //   ),
+                        //   // Renders the data label
+                        //   isVisible: true,
+                        // ),
+                        dataSource: data,
+                        xValueMapper: (ChartData data, _) => data.x,
+                        yValueMapper: (ChartData data, _) => data.y,
+                        name: widget.chartTitle,
+                        color: Colors.indigo[900]),
+                  ]),
+            ),
           ),
           IconButton(
-              padding: EdgeInsets.only(right: 10),
+              padding: EdgeInsets.only(right: 20),
               visualDensity: VisualDensity(horizontal: -4, vertical: -4),
               alignment: Alignment.centerRight,
               onPressed: () {
@@ -257,21 +260,37 @@ class BIDChartState extends State<BIDChartView> {
       SizedBox(
         height: 10,
       ),
-      Container(
-        height: MediaQuery.of(context).size.height * 0.5,
-        width: double.infinity,
-        child: Card(
-          child: Padding(
-            padding:
-                const EdgeInsets.only(right: 10, left: 0, top: 20, bottom: 10),
-            child: widgetDetails.isNotEmpty
-                ? buildChart()
-                : Center(
-                    child: Text("No Data Found"),
+      ClipRRect(
+        borderRadius: BorderRadius.all(
+            Radius.circular(MediaQuery.of(context).size.width * 0.05)),
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.5,
+          width: MediaQuery.of(context).size.width,
+          padding:
+              const EdgeInsets.only(right: 0, left: 0, top: 20, bottom: 10),
+          color: Colors.white,
+          child: Stack(
+            alignment: AlignmentDirectional.center,
+            children: [
+              Positioned(
+                bottom: 22,
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.5,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.rectangle,
                   ),
+                ),
+              ),
+              widgetDetails.isNotEmpty
+                  ? buildChart()
+                  : Center(
+                      child: Text("No Data Found"),
+                    ),
+            ],
           ),
         ),
-      )
+      ),
     ]);
   }
 }

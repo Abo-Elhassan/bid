@@ -23,8 +23,8 @@ class SplashController extends GetxController {
 
   void initApplication() async {
     Future.delayed(Duration(seconds: 4), () async {
-      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
       if (Platform.isAndroid) {
+        //AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
         // FlutterJailbreakDetection.developerMode.then((value) {
         //   if (value || !(androidInfo.isPhysicalDevice)) {
         //     Get.offAllNamed(Routes.ERROR);

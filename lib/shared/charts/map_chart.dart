@@ -144,50 +144,68 @@ class _MapChartState extends State<MapChart> {
       SizedBox(
         height: 10,
       ),
-      Container(
+      ClipRRect(
+        borderRadius: BorderRadius.all(
+            Radius.circular(MediaQuery.of(context).size.width * 0.05)),
+        child: Container(
           height: MediaQuery.of(context).size.height * 0.5,
-          width: double.infinity,
-          child: Card(
-              child: GoogleMap(
-            minMaxZoomPreference: MinMaxZoomPreference(0, 18),
-            onTap: (argument) {
-              setState(() {
-                isZoomed = true;
-                print(argument);
-                mapController.animateCamera(CameraUpdate.newCameraPosition(
-                    CameraPosition(target: argument, zoom: 4)));
-              });
-            },
-            onCameraMove: (position) {
-              setState(() {
-                zoomLevel = position.zoom;
-              });
-            },
-            //Map widget from google_maps_flutter package
-            zoomGesturesEnabled: true, //enable Zoom in, out on map
-            initialCameraPosition: CameraPosition(
-              //innital position in map
-              target: currentLocation, //initial position
-              zoom: zoomLevel, //initial zoom level
-            ),
-            scrollGesturesEnabled: true,
-            myLocationEnabled: true,
+          width: MediaQuery.of(context).size.width,
+          child: Stack(
+            alignment: AlignmentDirectional.center,
+            children: [
+              Positioned(
+                bottom: 22,
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.5,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.rectangle,
+                  ),
+                ),
+              ),
+              GoogleMap(
+                zoomControlsEnabled: true,
+                minMaxZoomPreference: MinMaxZoomPreference(0, 18),
+                onTap: (argument) {
+                  setState(() {
+                    isZoomed = true;
+                    print(argument);
+                    mapController.animateCamera(CameraUpdate.newCameraPosition(
+                        CameraPosition(target: argument, zoom: 4)));
+                  });
+                },
+                onCameraMove: (position) {
+                  setState(() {
+                    zoomLevel = position.zoom;
+                  });
+                },
+                //Map widget from google_maps_flutter package
+                zoomGesturesEnabled: true, //enable Zoom in, out on map
+                initialCameraPosition: CameraPosition(
+                  //innital position in map
+                  target: currentLocation, //initial position
+                  zoom: zoomLevel, //initial zoom level
+                ),
+                scrollGesturesEnabled: true,
 
-            myLocationButtonEnabled: true,
-            gestureRecognizers: Set()
-              ..add(
-                  Factory<PanGestureRecognizer>(() => PanGestureRecognizer())),
-            polygons: polygon,
-            circles: circles,
-            markers: zoomLevel >= 4 ? markers : {}, //markers to show on map
-            mapType: MapType.hybrid, //map type
-            onMapCreated: (controller) {
-              //method called when map is created
-              setState(() {
-                mapController = controller;
-              });
-            },
-          )))
+                gestureRecognizers: Set()
+                  ..add(Factory<PanGestureRecognizer>(
+                      () => PanGestureRecognizer())),
+                polygons: polygon,
+                circles: circles,
+                markers: zoomLevel >= 4 ? markers : {}, //markers to show on map
+                mapType: MapType.hybrid, //map type
+                onMapCreated: (controller) {
+                  //method called when map is created
+                  setState(() {
+                    mapController = controller;
+                  });
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
     ]);
   }
 }

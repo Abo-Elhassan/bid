@@ -89,10 +89,14 @@ class FilteredBIDChartState extends State<FilteredBIDChart> {
 
   void prepareYAxis() {
     if (widgetDetails.isNotEmpty) {
-      maxItem = widgetDetails.reduce((value, element) =>
-          value.biValue > element.biValue ? value : element);
-      minItem = widgetDetails.reduce((value, element) =>
-          value.biValue < element.biValue ? value : element);
+      maxItem = widgetDetails
+          .where((wid) => wid.biYearDisplay == showedYear)
+          .reduce((value, element) =>
+              value.biValue > element.biValue ? value : element);
+      minItem = widgetDetails
+          .where((wid) => wid.biYearDisplay == showedYear)
+          .reduce((value, element) =>
+              value.biValue < element.biValue ? value : element);
       minVal = double.parse(minItem.biValue.toString());
       maxVal = double.parse(maxItem.biValue.toString());
       if (widget.chartType == "GDPGR" && minVal < 0) {
@@ -103,7 +107,7 @@ class FilteredBIDChartState extends State<FilteredBIDChart> {
       } else {
         minVal = minVal > 0 ? 0 : 1.5 * minVal;
 
-        maxVal = 1.5 * maxVal;
+        maxVal = 1.3 * maxVal;
         interval = ((maxVal - minVal) / 4);
       }
     }
@@ -221,9 +225,9 @@ class FilteredBIDChartState extends State<FilteredBIDChart> {
             opposedPosition: true,
             edgeLabelPlacement: EdgeLabelPlacement.none,
             decimalPlaces: 1,
-            minimum: widget.minVal,
-            maximum: widget.maxVal,
-            interval: widget.interval,
+            minimum: minVal,
+            maximum: maxVal,
+            interval: interval,
             labelFormat: ' {value} ${widgetDetails[0].biUnit}',
             labelStyle: TextStyle(
               fontFamily: 'Pilat Demi',
@@ -313,9 +317,9 @@ class FilteredBIDChartState extends State<FilteredBIDChart> {
           opposedPosition: true,
           edgeLabelPlacement: EdgeLabelPlacement.none,
           decimalPlaces: 1,
-          minimum: widget.minVal,
-          maximum: widget.maxVal,
-          interval: widget.interval,
+          minimum: minVal,
+          maximum: maxVal,
+          interval: interval,
           labelFormat: ' {value} ${widgetDetails[0].biUnit}',
           labelStyle: TextStyle(
             fontFamily: 'Pilat Demi',
@@ -403,7 +407,7 @@ class FilteredBIDChartState extends State<FilteredBIDChart> {
                         showedWidgets = widgetDetails
                             .where((wid) => wid.biYearDisplay == newValue)
                             .toList();
-
+                        prepareYAxis();
                         data.clear();
 
                         for (var wid in showedWidgets) {

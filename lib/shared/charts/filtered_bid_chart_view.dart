@@ -83,12 +83,17 @@ class FilteredBIDChartViewState extends State<FilteredBIDChartView> {
 
   void prepareYAxis() {
     if (widgetDetails.isNotEmpty) {
-      maxItem = widgetDetails.reduce((value, element) =>
-          value.biValue > element.biValue ? value : element);
-      minItem = widgetDetails.reduce((value, element) =>
-          value.biValue < element.biValue ? value : element);
+      maxItem = widgetDetails
+          .where((wid) => wid.biYearDisplay == showedYear)
+          .reduce((value, element) =>
+              value.biValue > element.biValue ? value : element);
+      minItem = widgetDetails
+          .where((wid) => wid.biYearDisplay == showedYear)
+          .reduce((value, element) =>
+              value.biValue < element.biValue ? value : element);
       minVal = double.parse(minItem.biValue.toString());
       maxVal = double.parse(maxItem.biValue.toString());
+
       if (widget.chartType == "GDPGR" && minVal < 0) {
         minVal = -150;
         maxVal = 150;
@@ -97,7 +102,8 @@ class FilteredBIDChartViewState extends State<FilteredBIDChartView> {
       } else {
         minVal = minVal > 0 ? 0 : 1.5 * minVal;
 
-        maxVal = 1.5 * maxVal;
+        maxVal = 1.3 * maxVal;
+
         interval = ((maxVal - minVal) / 4);
       }
     }
@@ -329,6 +335,7 @@ class FilteredBIDChartViewState extends State<FilteredBIDChartView> {
                         data.clear();
 
                         setChartXvalue();
+                        prepareYAxis();
                       });
                     },
                   )
@@ -336,21 +343,37 @@ class FilteredBIDChartViewState extends State<FilteredBIDChartView> {
           ],
         ),
       ),
-      Container(
-        height: MediaQuery.of(context).size.height * 0.5,
-        width: double.infinity,
-        child: Card(
-          child: Padding(
-            padding:
-                const EdgeInsets.only(right: 0, left: 0, top: 20, bottom: 10),
-            child: widgetDetails.isNotEmpty
-                ? buildChart()
-                : Center(
-                    child: Text("No Data Found"),
+      ClipRRect(
+        borderRadius: BorderRadius.all(
+            Radius.circular(MediaQuery.of(context).size.width * 0.05)),
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.5,
+          width: MediaQuery.of(context).size.width,
+          padding:
+              const EdgeInsets.only(right: 0, left: 0, top: 20, bottom: 10),
+          color: Colors.white,
+          child: Stack(
+            alignment: AlignmentDirectional.center,
+            children: [
+              Positioned(
+                bottom: 22,
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.5,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.rectangle,
                   ),
+                ),
+              ),
+              widgetDetails.isNotEmpty
+                  ? buildChart()
+                  : Center(
+                      child: Text("No Data Found"),
+                    ),
+            ],
           ),
         ),
-      )
+      ),
     ]);
   }
 }
