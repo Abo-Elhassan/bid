@@ -3,7 +3,7 @@
         <uses-permission android:name="android.permission.INTERNET"/>
         <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
    <application
-        android:label="BID"
+        android:label="BID - DPW MEA"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
         android:allowBackup="false"

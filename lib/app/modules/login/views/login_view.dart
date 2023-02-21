@@ -91,7 +91,7 @@ class LoginView extends GetView<LoginController> {
                           borderRadius: BorderRadius.circular(30),
                           child: Image.asset(
                             Assets.kLogin,
-                            height: mediaQuery.size.height * 0.08,
+                            height: mediaQuery.size.height * 0.09,
                             fit: BoxFit.cover,
                             gaplessPlayback: true,
                           ),

@@ -99,7 +99,7 @@ class FilteredBIDChartState extends State<FilteredBIDChart> {
               value.biValue < element.biValue ? value : element);
       minVal = double.parse(minItem.biValue.toString());
       maxVal = double.parse(maxItem.biValue.toString());
-      if (widget.chartType == "GDPGR" && minVal < 0) {
+      if (widget.chartType == "GDPGR" && minVal <= 0) {
         minVal = -150;
         maxVal = 150;
 

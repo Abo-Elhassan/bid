@@ -33,12 +33,14 @@ dependencies:
   root_check: ^0.0.2+1
   dropdown_search: ^5.0.5
   google_maps_flutter: ^2.2.3
+  new_version: ^0.3.1
+  scrollable_positioned_list: ^0.3.5
 
 
 flutter_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/images/icon_launcher.jpg"
+  image_path: "assets/images/DPW_LOGO_B&W.jpg"
 
 
 

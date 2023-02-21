@@ -15,9 +15,12 @@ import 'package:syncfusion_flutter_maps/maps.dart';
 
 class MapChart extends StatefulWidget {
   final Function renderWidgets;
+  final Function showCharts;
+  final Function autoScroll;
   final FilterDataResponse filterData;
   final List<Country> countries;
-  MapChart(this.renderWidgets, this.countries, this.filterData);
+  MapChart(this.renderWidgets, this.showCharts, this.autoScroll, this.countries,
+      this.filterData);
 
   @override
   State<MapChart> createState() => _MapChartState();
@@ -25,42 +28,45 @@ class MapChart extends StatefulWidget {
 
 class _MapChartState extends State<MapChart> {
   late GoogleMapController mapController;
-  late List<LatLng> point = <LatLng>[];
-  late Set<Polygon> polygon = <Polygon>{}; //contrller for Google map
-  final Set<Marker> markers = new Set(); //markers for google map
+
+  late Set<Polygon> colorizedPolygons = <Polygon>{}; //contrller for Google map
+  late Set<Marker> markers = new Set(); //markers for google map
   late double zoomLevel = 0.0;
-  late LatLng currentLocation = LatLng(26.8206, 30.8025);
+  late LatLng currentLocation = LatLng(0, 25.8025);
 
   late bool isZoomed = false;
-  Set<Circle> circles = Set.from([
-    Circle(
-      circleId: CircleId("SA"),
-      center: LatLng(23.8859, 45.0792),
-      fillColor: Colors.blue.shade100.withOpacity(0.5),
-      strokeColor: Colors.blue.shade100.withOpacity(0.1),
-      radius: 40000000000,
-    )
-  ]);
+
 //location to show in map
 
   @override
   void initState() {
-    getmarkers();
-    addPoints();
-    List<Polygon> addPolygon = [
-      Polygon(
-          polygonId: PolygonId(widget.filterData.countryList!
-              .firstWhere((country) => country.countryUno == 121)
-              .countryUno
-              .toString()),
-          points: point,
+    addPolygons();
+
+    super.initState();
+  }
+
+  void addPolygons() {
+    for (var country in widget.filterData.countryList!
+        .where((con) => con.coordinates != null)) {
+      var polygon = Polygon(
+          polygonId: PolygonId(country.countryUno.toString()),
+          points: country.coordinates != null
+              ? getCountryPoints(country.coordinates!)
+              : [],
           consumeTapEvents: true,
           strokeColor: Colors.grey,
           strokeWidth: 1,
-          fillColor: Colors.redAccent,
+          fillColor: Color.fromRGBO(
+            math.Random().nextInt(255),
+            math.Random().nextInt(255),
+            math.Random().nextInt(255),
+            1,
+          ),
           onTap: () {
-            final country = widget.filterData.countryList!
-                .firstWhere((country) => country.countryUno == 121);
+            if (mounted) {
+              widget.showCharts(true);
+            }
+
             final request = WidgetDataRequest(
               regionUno: country.regionUno.toString(),
               countryUno: country.countryUno.toString(),
@@ -75,56 +81,78 @@ class _MapChartState extends State<MapChart> {
             widget.renderWidgets(request, 1);
             if (mounted) {
               setState(() {
-                mapController.animateCamera(CameraUpdate.newCameraPosition(
-                    CameraPosition(target: LatLng(23.8859, 45.0792), zoom: 4)));
+                markers = new Set();
+                addMarkers(country.countryUno);
+                mapController.animateCamera(
+                    CameraUpdate.newCameraPosition(CameraPosition(
+                        target: LatLng(
+                          country.latitude.toDouble(),
+                          country.longitude.toDouble(),
+                        ),
+                        zoom: 4)));
               });
             }
-          }),
-    ];
-    polygon.addAll(addPolygon);
-    super.initState();
-  }
+          });
 
-  void addPoints() {
-    for (var i = 0; i < GeoJson.SA.length; i++) {
-      var ltlng = LatLng(GeoJson.SA[i][1], GeoJson.SA[i][0]);
-      point.add(ltlng);
+      colorizedPolygons.add(polygon);
     }
   }
 
-  void getmarkers() {
+  List<LatLng> getCountryPoints(List<List<double>> countryCoordinates) {
+    late List<LatLng> countryPoints = <LatLng>[];
+    countryCoordinates.asMap().forEach((i, point) {
+      var ltlng = LatLng(countryCoordinates[i][1], countryCoordinates[i][0]);
+      countryPoints.add(ltlng);
+    });
+
+    return countryPoints;
+  }
+
+  void addMarkers(int selectedCountryUno) {
     //markers to place on map
+    for (var port in widget.filterData.portList!.where((por) =>
+        por.latitude != 0 &&
+        por.longitude != 0 &&
+        por.countryUno == selectedCountryUno)) {
+      markers.add(Marker(
+          //add first marker
+          markerId: MarkerId(port.portUno.toString()),
+          position: LatLng(
+            port.latitude.toDouble(),
+            port.longitude.toDouble(),
+          ), //position of marker
+          infoWindow: InfoWindow(
+            //popup info
+            title: port.portName,
+            //snippet: '1  Subtitle',
+          ),
+          icon: BitmapDescriptor.defaultMarker,
+          zIndex: 0,
+          onTap: () async {
+            if (mounted) {
+              widget.autoScroll();
+              widget.showCharts(true);
+            }
 
-    markers.add(Marker(
-        //add first marker
-        markerId: MarkerId("1"),
-        position: LatLng(21.4669, 39.1744), //position of marker
-        infoWindow: InfoWindow(
-          //popup info
-          title: 'Jeddah Port',
-          //snippet: '1  Subtitle',
-        ),
-        icon: BitmapDescriptor.defaultMarker,
-        zIndex: 0,
-        onTap: () async {
-          final port =
-              widget.filterData.portList!.firstWhere((por) => por.portUno == 7);
-          final request = WidgetDataRequest(
-            regionUno: "1",
-            countryUno: port.countryUno.toString(),
-            portUno: port.portUno.toString(),
-            terminalUno: "",
-            operatorUno: "",
-            widgetTypeUno: "",
-            companyUno: 1,
-            userUno: Helpers.getCurrentUser().userUno,
-            condition: 0,
-          );
-          widget.renderWidgets(request, 2);
-        }
+            var country = widget.filterData.countryList!
+                .firstWhere((con) => con.countryUno == port.countryUno);
+            final request = WidgetDataRequest(
+              regionUno: country.regionUno.toString(),
+              countryUno: port.countryUno.toString(),
+              portUno: port.portUno.toString(),
+              terminalUno: "",
+              operatorUno: "",
+              widgetTypeUno: "",
+              companyUno: 1,
+              userUno: Helpers.getCurrentUser().userUno,
+              condition: 0,
+            );
+            widget.renderWidgets(request, 2);
+          }
 
-        //Icon for Marker
-        ));
+          //Icon for Marker
+          ));
+    }
   }
 
   @override
@@ -148,7 +176,7 @@ class _MapChartState extends State<MapChart> {
         borderRadius: BorderRadius.all(
             Radius.circular(MediaQuery.of(context).size.width * 0.05)),
         child: Container(
-          height: MediaQuery.of(context).size.height * 0.5,
+          height: MediaQuery.of(context).size.height * 0.4,
           width: MediaQuery.of(context).size.width,
           child: Stack(
             alignment: AlignmentDirectional.center,
@@ -164,16 +192,13 @@ class _MapChartState extends State<MapChart> {
                 ),
               ),
               GoogleMap(
-                zoomControlsEnabled: true,
-                minMaxZoomPreference: MinMaxZoomPreference(0, 18),
                 onTap: (argument) {
-                  setState(() {
-                    isZoomed = true;
-                    print(argument);
-                    mapController.animateCamera(CameraUpdate.newCameraPosition(
-                        CameraPosition(target: argument, zoom: 4)));
-                  });
+                  setState(() {});
                 },
+                zoomControlsEnabled: true,
+                minMaxZoomPreference: MinMaxZoomPreference(0, 30),
+                myLocationButtonEnabled: false,
+                myLocationEnabled: false,
                 onCameraMove: (position) {
                   setState(() {
                     zoomLevel = position.zoom;
@@ -190,9 +215,15 @@ class _MapChartState extends State<MapChart> {
 
                 gestureRecognizers: Set()
                   ..add(Factory<PanGestureRecognizer>(
-                      () => PanGestureRecognizer())),
-                polygons: polygon,
-                circles: circles,
+                      () => PanGestureRecognizer()))
+                  ..add(Factory<ScaleGestureRecognizer>(
+                      () => ScaleGestureRecognizer()))
+                  ..add(Factory<TapGestureRecognizer>(
+                      () => TapGestureRecognizer()))
+                  ..add(Factory<VerticalDragGestureRecognizer>(
+                      () => VerticalDragGestureRecognizer())),
+                polygons: colorizedPolygons,
+
                 markers: zoomLevel >= 4 ? markers : {}, //markers to show on map
                 mapType: MapType.hybrid, //map type
                 onMapCreated: (controller) {

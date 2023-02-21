@@ -1,3 +1,6 @@
+import 'package:bid_app/shared/charts/geo_json.dart';
+import 'package:get/get.dart';
+
 class FilterDataResponse {
   late List<Region>? regionList;
   late List<Country>? countryList;
@@ -75,6 +78,10 @@ class Country {
   late int regionUno;
   late String? countryCode;
   late String? countryName;
+  late num latitude;
+  late num longitude;
+  late String? centrePoint;
+  late List<List<double>>? coordinates;
   late bool isSelected;
   late bool isFitlerSelected;
   late bool isRegionSelected;
@@ -83,6 +90,10 @@ class Country {
     this.regionUno = 0,
     this.countryCode = "",
     this.countryName = "",
+    this.latitude = 0,
+    this.longitude = 0,
+    this.centrePoint = "",
+    this.coordinates = const [],
     this.isSelected = true,
     this.isFitlerSelected = false,
     this.isRegionSelected = true,
@@ -93,6 +104,12 @@ class Country {
     regionUno = json['regionUno'];
     countryCode = json['countryCode'];
     countryName = json['countryName'];
+    latitude = json['latitude'];
+    longitude = json['longitude'];
+    centrePoint = json['centrePoint'];
+    coordinates = GeoJson.countires
+        .firstWhereOrNull((con) => con.countryUno == countryUno)
+        ?.coordinates;
     isSelected = true;
     isFitlerSelected = false;
     isRegionSelected = true;
@@ -105,6 +122,9 @@ class Port {
   late String? portCode;
   late String? portName;
   late String? locationID;
+  late num latitude;
+  late num longitude;
+  late String? centrePoint;
   late bool isSelected;
   late bool isFitlerSelected;
   late bool isCountrySelected;
@@ -114,6 +134,9 @@ class Port {
       this.portCode = "",
       this.portName = "",
       this.locationID = "",
+      this.latitude = 0,
+      this.longitude = 0,
+      this.centrePoint = "",
       this.isSelected = true,
       this.isFitlerSelected = false,
       this.isCountrySelected = true});
@@ -124,6 +147,9 @@ class Port {
     portCode = json['portCode'];
     portName = json['portName'];
     locationID = json['locationID'];
+    latitude = json['latitude'];
+    longitude = json['longitude'];
+    centrePoint = json['centrePoint'];
     isSelected = true;
     isFitlerSelected = false;
     isCountrySelected = true;
@@ -156,6 +182,7 @@ class Terminal {
     terminalCode = json['terminalCode'];
     terminalName = json['terminalName'];
     locationID = json['locationID'];
+
     isSelected = true;
     isFitlerSelected = false;
     isPortSelected = true;

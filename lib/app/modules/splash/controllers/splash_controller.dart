@@ -24,14 +24,14 @@ class SplashController extends GetxController {
   void initApplication() async {
     Future.delayed(Duration(seconds: 4), () async {
       if (Platform.isAndroid) {
-        //AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-        // FlutterJailbreakDetection.developerMode.then((value) {
-        //   if (value || !(androidInfo.isPhysicalDevice)) {
-        //     Get.offAllNamed(Routes.ERROR);
-        //   } else {
-        Get.offAllNamed(Routes.LANDING);
-        //   }
-        // });
+        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+        FlutterJailbreakDetection.developerMode.then((value) {
+          //   if (value || !(androidInfo.isPhysicalDevice)) {
+          //     Get.offAllNamed(Routes.ERROR);
+          //   } else {
+          Get.offAllNamed(Routes.LANDING);
+          // }
+        });
       } else if (Platform.isIOS) {
         IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
 

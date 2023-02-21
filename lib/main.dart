@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:get_storage/get_storage.dart';
+import 'package:new_version/new_version.dart';
 
 late ByteData certificate;
 
@@ -46,7 +47,7 @@ void main() async {
   runApp(
     GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      title: "BID",
+      title: "BID - DPW MEA",
       theme: appTheme(),
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,

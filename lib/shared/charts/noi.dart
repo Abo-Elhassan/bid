@@ -39,9 +39,10 @@ class NatureOfInvolvement extends StatelessWidget {
               width: 1, color: Colors.black38, style: BorderStyle.solid)),
       columnWidths: <int, TableColumnWidth>{
         0: FixedColumnWidth(mediaQuery.size.width * 0.12),
-        1: FixedColumnWidth(mediaQuery.size.width * 0.17),
-        2: FixedColumnWidth(mediaQuery.size.width * 0.18),
-        3: const FlexColumnWidth(),
+        1: FixedColumnWidth(mediaQuery.size.width * 0.15),
+        2: FixedColumnWidth(mediaQuery.size.width * 0.15),
+        3: FixedColumnWidth(mediaQuery.size.width * 0.1),
+        4: const FlexColumnWidth(),
       },
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
       children: [
@@ -50,9 +51,10 @@ class NatureOfInvolvement extends StatelessWidget {
               color: Color.fromRGBO(235, 235, 240, 1),
             ),
             children: [
-              buildHeader(mediaQuery, "Country"),
-              buildHeader(mediaQuery, "Port"),
-              buildHeader(mediaQuery, "Terminal"),
+              buildHeader(mediaQuery, "CON"),
+              buildHeader(mediaQuery, "POR"),
+              buildHeader(mediaQuery, "TER"),
+              buildHeader(mediaQuery, "OP"),
               buildHeader(mediaQuery, "Nature of Involvement"),
             ]),
         ...noiData.map((item) {
@@ -61,7 +63,7 @@ class NatureOfInvolvement extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(
                 vertical: mediaQuery.size.height * 0.03,
-                // horizontal: mediaQuery.size.width * 0.01,
+                horizontal: mediaQuery.size.width * 0.01,
               ),
               child: Text(
                 noiData[index].countryCode.toString().toUpperCase(),
@@ -84,7 +86,7 @@ class NatureOfInvolvement extends StatelessWidget {
                 style: const TextStyle(
                   color: Color.fromRGBO(110, 110, 114, 1),
                   fontFamily: 'Pilat Light',
-                  fontSize: 10,
+                  fontSize: 9,
                 ),
               ),
             ),
@@ -95,6 +97,21 @@ class NatureOfInvolvement extends StatelessWidget {
               ),
               child: Text(
                 noiData[index].terminalCode.toString().toUpperCase(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Color.fromRGBO(110, 110, 114, 1),
+                  fontFamily: 'Pilat Light',
+                  fontSize: 9,
+                ),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(
+                vertical: mediaQuery.size.height * 0.03,
+                horizontal: mediaQuery.size.width * 0.01,
+              ),
+              child: Text(
+                noiData[index].operatorCode.toString().toUpperCase(),
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   color: Color.fromRGBO(110, 110, 114, 1),

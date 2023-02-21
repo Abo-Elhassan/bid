@@ -11,11 +11,13 @@ class PageLayout extends StatefulWidget {
   final Function onRefresh;
   final String? title;
   final bool isDashboard;
+  final ScrollController? scrollController;
   PageLayout({
-    required this.onRefresh,
     required this.content,
-    required this.isDashboard,
+    required this.onRefresh,
     this.title,
+    required this.isDashboard,
+    this.scrollController,
   });
 
   @override
@@ -26,6 +28,17 @@ class _PageLayoutState extends State<PageLayout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        floatingActionButton: widget.scrollController != null
+            ? FloatingActionButton(
+                onPressed: () {
+                  widget.scrollController!.animateTo(
+                    0,
+                    duration: Duration(milliseconds: 500),
+                    curve: Curves.linear,
+                  );
+                },
+                child: Icon(Icons.arrow_upward))
+            : SizedBox(),
         appBar: AppBar(
           title: Text(widget.title ?? ""),
           centerTitle: true,

@@ -28,10 +28,15 @@ class WeatherForecastController extends GetxController with StateMixin {
   final _dashboardProvider = Get.find<DashboardProvider>();
   final _weatherProvider = Get.find<WeatherForecastProvider>();
 
+  // @override
+  // void onReady() {
+  //   super.onReady();
+  // }
+
   @override
-  void onReady() {
-    super.onReady();
+  void onInit() {
     fetchData(true);
+    super.onInit();
   }
 
   Future<void> getWeatherData(int portUno) async {

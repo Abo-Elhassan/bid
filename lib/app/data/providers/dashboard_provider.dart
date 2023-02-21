@@ -3,6 +3,7 @@ import 'package:bid_app/app/data/models/requests/widget_data_reqeuest.dart';
 import 'package:bid_app/app/data/models/responses/filter_data_response.dart';
 import 'package:bid_app/app/data/models/responses/widget_data_response.dart';
 import 'package:bid_app/app/data/providers/bid_provider.dart';
+import 'package:darq/darq.dart';
 import 'package:get/get.dart';
 
 class DashboardProvider extends BidProvider {
@@ -23,6 +24,7 @@ class DashboardProvider extends BidProvider {
       if (response.body != null) {
         filterDataResponse = FilterDataResponse.fromJson(response.body);
       }
+
       return filterDataResponse;
     } catch (e) {
       rethrow;
