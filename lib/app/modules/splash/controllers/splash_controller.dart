@@ -26,59 +26,59 @@ class SplashController extends GetxController {
       if (Platform.isAndroid) {
         AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
         FlutterJailbreakDetection.developerMode.then((value) {
-          //   if (value || !(androidInfo.isPhysicalDevice)) {
-          //     Get.offAllNamed(Routes.ERROR);
-          //   } else {
-          Get.offAllNamed(Routes.LANDING);
-          // }
+          if (value || !(androidInfo.isPhysicalDevice)) {
+            Get.offAllNamed(Routes.ERROR);
+          } else {
+            Get.offAllNamed(Routes.LANDING);
+          }
         });
       } else if (Platform.isIOS) {
         IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
 
         FlutterJailbreakDetection.jailbroken.then((value) {
-          if (value == true || !iosInfo.isPhysicalDevice) {
-            Get.offNamed(Routes.ERROR);
-          } else {
-            Get.offAllNamed(Routes.LANDING);
-          }
+          //   if (value == true || !iosInfo.isPhysicalDevice) {
+          //    Get.offNamed(Routes.ERROR);
+          //  } else {
+          Get.offAllNamed(Routes.LANDING);
+          //  }
         });
       }
 
-      // RootCheck.isRooted.then((value) {
-      //   if (value != null && value) {
-      //     Get.offAllNamed(Routes.ERROR);
-      //   }
-      // });
+      RootCheck.isRooted.then((value) {
+        if (value != null && value) {
+          Get.offAllNamed(Routes.ERROR);
+        }
+      });
 
-      // RootCheck.isRootedWithBusyBoxCheck.then((value) {
-      //   if (value != null && value) {
-      //     Get.offAllNamed(Routes.ERROR);
-      //   }
-      // });
+      RootCheck.isRootedWithBusyBoxCheck.then((value) {
+        if (value != null && value) {
+          Get.offAllNamed(Routes.ERROR);
+        }
+      });
 
-      // RootCheck.checkForRootNative.then((value) {
-      //   if (value != null && value) {
-      //     Get.offAllNamed(Routes.ERROR);
-      //   }
-      // });
+      RootCheck.checkForRootNative.then((value) {
+        if (value != null && value) {
+          Get.offAllNamed(Routes.ERROR);
+        }
+      });
 
-      // RootCheck.detectPotentiallyDangerousApps.then((value) {
-      //   if (value != null && value) {
-      //     Get.offAllNamed(Routes.ERROR);
-      //   }
-      // });
+      RootCheck.detectPotentiallyDangerousApps.then((value) {
+        if (value != null && value) {
+          Get.offAllNamed(Routes.ERROR);
+        }
+      });
 
-      // RootCheck.detectTestKeys.then((value) {
-      //   if (value != null && value) {
-      //     Get.offAllNamed(Routes.ERROR);
-      //   }
-      // });
+      RootCheck.detectTestKeys.then((value) {
+        if (value != null && value) {
+          Get.offAllNamed(Routes.ERROR);
+        }
+      });
 
-      // RootCheck.checkForDangerousProps.then((value) {
-      //   if (value != null && value) {
-      //     Get.offAllNamed(Routes.ERROR);
-      //   }
-      // });
+      RootCheck.checkForDangerousProps.then((value) {
+        if (value != null && value) {
+          Get.offAllNamed(Routes.ERROR);
+        }
+      });
     });
   }
 }

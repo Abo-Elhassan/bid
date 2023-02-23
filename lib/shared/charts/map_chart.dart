@@ -89,7 +89,7 @@ class _MapChartState extends State<MapChart> {
                           country.latitude.toDouble(),
                           country.longitude.toDouble(),
                         ),
-                        zoom: 4)));
+                        zoom: zoomLevel >= 4 ? zoomLevel : 4)));
               });
             }
           });
@@ -176,7 +176,7 @@ class _MapChartState extends State<MapChart> {
         borderRadius: BorderRadius.all(
             Radius.circular(MediaQuery.of(context).size.width * 0.05)),
         child: Container(
-          height: MediaQuery.of(context).size.height * 0.4,
+          height: MediaQuery.of(context).size.height * 0.5,
           width: MediaQuery.of(context).size.width,
           child: Stack(
             alignment: AlignmentDirectional.center,

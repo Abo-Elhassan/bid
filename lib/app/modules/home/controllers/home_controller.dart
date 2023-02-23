@@ -63,9 +63,6 @@ class HomeController extends GetxController with StateMixin {
   }
 
   void autoScroll() {
-    // WidgetsBinding.instance.addPostFrameCallback((_) => itemController.scrollTo(
-    //     index: 3, duration: Duration(milliseconds: 200), curve: Curves.linear));
-
     scrollController.animateTo(
       MediaQuery.of(Get.context!).size.height * 0.5,
       duration: Duration(seconds: 1),
@@ -358,6 +355,7 @@ class HomeController extends GetxController with StateMixin {
   void refreshData() async {
     change(null, status: RxStatus.loading());
     renderType = 0;
+    isChartsVisible = true;
     update();
 
     try {
