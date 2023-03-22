@@ -1,3 +1,4 @@
+import 'package:bid_app/app/core/utilities/helpers.dart';
 import 'package:bid_app/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -58,50 +59,52 @@ class SideMenu extends StatelessWidget {
             SizedBox(
               height: mediaQuery.size.height * 0.03,
             ),
-            TextButton(
-              style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  minimumSize: const Size(50, 30),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  alignment: Alignment.centerLeft),
-              onPressed: () {
-                Get.offNamed(Routes.HOME);
-                Scaffold.of(context).openEndDrawer();
-              },
-              child: Text(
-                "DASHBOARD",
-                textAlign: TextAlign.end,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'Pilat Heavy',
-                  fontSize: mediaQuery.size.width * 0.035,
+            if (Helpers.getCurrentUser().roleType != 3)
+              TextButton(
+                style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    minimumSize: const Size(50, 30),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    alignment: Alignment.centerLeft),
+                onPressed: () {
+                  Get.offNamed(Routes.HOME);
+                  Scaffold.of(context).openEndDrawer();
+                },
+                child: Text(
+                  "DASHBOARD",
+                  textAlign: TextAlign.end,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Pilat Heavy',
+                    fontSize: mediaQuery.size.width * 0.035,
+                  ),
                 ),
               ),
-            ),
             const Divider(
               thickness: 2,
               color: Color.fromRGBO(184, 182, 235, 1),
             ),
-            TextButton(
-              style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  minimumSize: const Size(50, 30),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  alignment: Alignment.centerLeft),
-              onPressed: () {
-                Get.offNamed(Routes.WEATHER_FORECAST);
-                Scaffold.of(context).openEndDrawer();
-              },
-              child: Text(
-                "WEATHER FORECAST",
-                textAlign: TextAlign.end,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'Pilat Heavy',
-                  fontSize: mediaQuery.size.width * 0.035,
+            if (Helpers.getCurrentUser().roleType != 2)
+              TextButton(
+                style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    minimumSize: const Size(50, 30),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    alignment: Alignment.centerLeft),
+                onPressed: () {
+                  Get.offNamed(Routes.WEATHER_FORECAST);
+                  Scaffold.of(context).openEndDrawer();
+                },
+                child: Text(
+                  "WEATHER FORECAST",
+                  textAlign: TextAlign.end,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Pilat Heavy',
+                    fontSize: mediaQuery.size.width * 0.035,
+                  ),
                 ),
               ),
-            ),
             SizedBox(
               height: mediaQuery.size.height * 0.55,
             ),

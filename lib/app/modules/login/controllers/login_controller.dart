@@ -116,10 +116,10 @@ class LoginController extends GetxController {
                 await Get.offNamed(Routes.HOME);
                 break;
               case 2:
-                await Get.toNamed(Routes.HOME);
+                await Get.offNamed(Routes.HOME);
                 break;
               case 3:
-                await Get.toNamed(Routes.WEATHER_FORECAST);
+                await Get.offNamed(Routes.WEATHER_FORECAST);
                 break;
               default:
             }

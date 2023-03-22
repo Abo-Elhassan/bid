@@ -1,6 +1,7 @@
 import 'package:bid_app/app/core/utilities/helpers.dart';
 import 'package:bid_app/app/core/values/app_assets.dart';
 import 'package:bid_app/app/modules/home/views/home_content.dart';
+import 'package:bid_app/app/routes/app_pages.dart';
 import 'package:bid_app/shared/charts/bid_chart_view.dart';
 import 'package:bid_app/shared/charts/filtered_bid_chart_view.dart';
 import 'package:bid_app/shared/charts/map_chart.dart';
@@ -64,9 +65,7 @@ class HomeView extends GetView<HomeController> {
             ),
           ],
         ),
-        drawer: Helpers.getCurrentUser().roleType == 1
-            ? SideMenu(Helpers.getCurrentUser().username.toString())
-            : null,
+        drawer: SideMenu(Helpers.getCurrentUser().username.toString()),
         body: GetBuilder<HomeController>(
           init: HomeController(),
           builder: (_) => Stack(children: [
@@ -287,7 +286,7 @@ class HomeView extends GetView<HomeController> {
                                                             .bidWidgetDetails!,
                                                       ),
                                                     SizedBox(
-                                                      height: 50,
+                                                      height: 80,
                                                     ),
                                                   ],
                                                 );

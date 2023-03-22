@@ -223,7 +223,7 @@ class _WidgetSliderState extends State<WidgetSlider> {
                                 dayForecast: item,
                                 icon: Assets.kRainProbability,
                                 title: "Rain Probability",
-                                content: item.rainProbability ?? "N/A",
+                                content: '${item.rainProbability}%',
                               ),
                             ],
                           ),

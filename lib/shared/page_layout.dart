@@ -1,10 +1,12 @@
 import 'package:bid_app/app/core/values/app_assets.dart';
+import 'package:bid_app/app/routes/app_pages.dart';
 import 'package:bid_app/shared/side_menu.dart';
 import 'package:bid_app/app/core/utilities/helpers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:get/get.dart';
 
 class PageLayout extends StatefulWidget {
   final Widget content;
@@ -40,6 +42,20 @@ class _PageLayoutState extends State<PageLayout> {
                 child: Icon(Icons.arrow_upward))
             : SizedBox(),
         appBar: AppBar(
+          leading: Builder(
+            builder: (BuildContext context) {
+              return IconButton(
+                icon: Icon(
+                  Icons.menu,
+                  size: MediaQuery.of(context).size.width * 0.06,
+                ),
+                onPressed: () {
+                  Scaffold.of(context).openDrawer();
+                },
+                tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+              );
+            },
+          ),
           title: Text(widget.title ?? ""),
           centerTitle: true,
           actions: [
@@ -51,9 +67,7 @@ class _PageLayoutState extends State<PageLayout> {
             ),
           ],
         ),
-        drawer: Helpers.getCurrentUser().roleType == 1
-            ? SideMenu(Helpers.getCurrentUser().username.toString())
-            : null,
+        drawer: SideMenu(Helpers.getCurrentUser().username.toString()),
         body: Stack(
           children: [
             if (widget.isDashboard)

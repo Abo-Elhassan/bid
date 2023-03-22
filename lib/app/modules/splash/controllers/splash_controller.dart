@@ -36,11 +36,11 @@ class SplashController extends GetxController {
         IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
 
         FlutterJailbreakDetection.jailbroken.then((value) {
-          //   if (value == true || !iosInfo.isPhysicalDevice) {
-          //    Get.offNamed(Routes.ERROR);
-          //  } else {
-          Get.offAllNamed(Routes.LANDING);
-          //  }
+          if (value == true || !iosInfo.isPhysicalDevice) {
+            Get.offNamed(Routes.ERROR);
+          } else {
+            Get.offAllNamed(Routes.LANDING);
+          }
         });
       }
 
