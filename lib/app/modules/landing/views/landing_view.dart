@@ -1,5 +1,4 @@
 import 'package:bid_app/app/core/values/app_assets.dart';
-import 'package:bid_app/app/core/utilities/helpers.dart';
 import 'package:bid_app/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 
