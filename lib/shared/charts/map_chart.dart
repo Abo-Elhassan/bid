@@ -1,4 +1,5 @@
 import 'package:bid_app/app/core/values/app_assets.dart';
+import 'package:bid_app/app/data/models/enums/filter_type.dart';
 import 'package:bid_app/app/data/models/requests/filter_data_request.dart';
 import 'package:bid_app/app/data/models/requests/widget_data_reqeuest.dart';
 import 'package:bid_app/app/data/models/responses/filter_data_response.dart';
@@ -17,10 +18,16 @@ class MapChart extends StatefulWidget {
   final Function renderWidgets;
   final Function showCharts;
   final Function autoScroll;
+  final Function showChatGPTAnswer;
   final FilterDataResponse filterData;
   final List<Country> countries;
-  MapChart(this.renderWidgets, this.showCharts, this.autoScroll, this.countries,
-      this.filterData);
+  MapChart(
+      {required this.renderWidgets,
+      required this.showCharts,
+      required this.autoScroll,
+      required this.showChatGPTAnswer,
+      required this.countries,
+      required this.filterData});
 
   @override
   State<MapChart> createState() => _MapChartState();
@@ -62,8 +69,9 @@ class _MapChartState extends State<MapChart> {
             math.Random().nextInt(255),
             1,
           ),
-          onTap: () {
+          onTap: () async {
             if (mounted) {
+              widget.autoScroll();
               widget.showCharts(true);
             }
 
@@ -78,7 +86,12 @@ class _MapChartState extends State<MapChart> {
               userUno: Helpers.getCurrentUser().userUno,
               condition: 0,
             );
-            widget.renderWidgets(request, 1);
+            widget.renderWidgets(
+              widgetDatarequest: request,
+              sentRenderType: 1,
+              field: country.countryName.toString(),
+              filter: FilterType.country,
+            );
             if (mounted) {
               setState(() {
                 markers = new Set();
@@ -147,7 +160,13 @@ class _MapChartState extends State<MapChart> {
               userUno: Helpers.getCurrentUser().userUno,
               condition: 0,
             );
-            widget.renderWidgets(request, 2);
+
+            widget.renderWidgets(
+              widgetDatarequest: request,
+              sentRenderType: 2,
+              field: port.portName.toString(),
+              filter: FilterType.port,
+            );
           }
 
           //Icon for Marker

@@ -157,12 +157,15 @@ class HomeView extends GetView<HomeController> {
                                         children: [
                                           if (controller.isMapVisible)
                                             MapChart(
-                                              controller.filterFromMap,
-                                              controller.showCharts,
-                                              controller.autoScroll,
-                                              controller
+                                              renderWidgets:
+                                                  controller.filterFromMap,
+                                              showCharts: controller.showCharts,
+                                              autoScroll: controller.autoScroll,
+                                              showChatGPTAnswer:
+                                                  controller.showChatGPTAnswer,
+                                              countries: controller
                                                   .filterData.countryList!,
-                                              controller.filterData,
+                                              filterData: controller.filterData,
                                             ),
                                           if (controller.isChartsVisible)
                                             SizedBox(

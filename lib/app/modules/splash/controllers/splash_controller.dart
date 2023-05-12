@@ -61,24 +61,6 @@ class SplashController extends GetxController {
           Get.offAllNamed(Routes.ERROR);
         }
       });
-
-      RootCheck.detectPotentiallyDangerousApps.then((value) {
-        if (value != null && value) {
-          Get.offAllNamed(Routes.ERROR);
-        }
-      });
-
-      RootCheck.detectTestKeys.then((value) {
-        if (value != null && value) {
-          Get.offAllNamed(Routes.ERROR);
-        }
-      });
-
-      RootCheck.checkForDangerousProps.then((value) {
-        if (value != null && value) {
-          Get.offAllNamed(Routes.ERROR);
-        }
-      });
     });
   }
 }

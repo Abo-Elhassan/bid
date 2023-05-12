@@ -3,6 +3,7 @@ import 'package:bid_app/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:new_version/new_version.dart';
 
 import '../controllers/landing_controller.dart';
 
@@ -13,6 +14,7 @@ class LandingView extends GetView<LandingController> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final themeData = Theme.of(context);
+
     return Scaffold(
       extendBody: true,
       body: Stack(fit: StackFit.expand, children: [

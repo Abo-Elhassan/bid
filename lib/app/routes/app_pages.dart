@@ -38,7 +38,7 @@ class AppPages {
   static final routes = [
     GetPage(
       name: _Paths.LANDING,
-      page: () => const LandingView(),
+      page: () => LandingView(),
       binding: LandingBinding(),
     ),
     GetPage(

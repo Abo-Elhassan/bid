@@ -1,3 +1,5 @@
+import 'package:bid_app/app/data/models/enums/filter_type.dart';
+import 'package:bid_app/app/data/models/requests/chatGPT_request.dart';
 import 'package:bid_app/app/data/models/requests/filter_data_request.dart';
 import 'package:bid_app/app/data/models/requests/weather_forecast_request.dart';
 import 'package:bid_app/app/data/models/requests/widget_data_reqeuest.dart';
@@ -380,23 +382,79 @@ class HomeController extends GetxController with StateMixin {
     }
   }
 
-  void filterFromMap(
-      WidgetDataRequest widgetDatarequest, int sentRenderType) async {
+  Future<void> showChatGPTAnswer(String field, FilterType filter) async {
+    if (await Helpers.checkConnectivity()) {
+      final request = ChatGPTRequest(
+        inputString: field,
+        condition: filter.index,
+      );
+
+      final response =
+          await Get.find<DashboardProvider>().getChatGPTAnswer(request);
+
+      if (response == "401") {
+        await Get.toNamed(Routes.LOGIN);
+      } else if (response == "500") {
+        await Helpers.dialog(Icons.error, Colors.red,
+            'Internal Server Error during getting chatGPT response');
+      } else {
+        await Get.defaultDialog(
+            title: 'Source: ChatGPT',
+            titleStyle: TextStyle(color: Colors.black),
+            titlePadding: EdgeInsets.only(top: 30),
+            content: Column(
+              children: [
+                Text(
+                  field,
+                  style: TextStyle(color: Colors.black),
+                ),
+                Text(
+                  response,
+                  style: TextStyle(color: Colors.black),
+                ),
+              ],
+            ),
+            //backgroundColor: Colors.teal,
+
+            middleText: response,
+            middleTextStyle: TextStyle(color: Colors.black),
+            textCancel: "Cancle",
+            radius: 27);
+        // await Helpers.dialog(
+        //   Icons.mark_chat_read,
+        //   Colors.black,
+        //   response,
+        // );
+      }
+    } else {
+      await Helpers.dialog(Icons.wifi_off_outlined, Colors.red,
+          'Please check Your Netowork Connection');
+    }
+  }
+
+  void filterFromMap({
+    required WidgetDataRequest widgetDatarequest,
+    required int sentRenderType,
+    required String field,
+    required FilterType filter,
+  }) async {
     change(null, status: RxStatus.loading());
 
     renderType = sentRenderType;
+
     update();
 
     try {
       if (await Helpers.checkConnectivity()) {
         await getWidgetData(widgetDatarequest);
         getSelectedRegion();
+
+        await showChatGPTAnswer(field, filter);
       } else {
         await Helpers.dialog(Icons.wifi_off_outlined, Colors.red,
             'Please check Your Netowork Connection');
       }
 
-      update();
       change(null, status: RxStatus.success());
     } catch (error) {
       change(null, status: RxStatus.error("Internal Error Occured"));

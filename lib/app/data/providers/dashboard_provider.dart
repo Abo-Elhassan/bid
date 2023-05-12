@@ -1,3 +1,4 @@
+import 'package:bid_app/app/data/models/requests/chatGPT_request.dart';
 import 'package:bid_app/app/data/models/requests/filter_data_request.dart';
 import 'package:bid_app/app/data/models/requests/widget_data_reqeuest.dart';
 import 'package:bid_app/app/data/models/responses/filter_data_response.dart';
@@ -50,6 +51,25 @@ class DashboardProvider extends BidProvider {
       }
 
       return widgetDataResponse;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<String> getChatGPTAnswer(ChatGPTRequest request) async {
+    try {
+      var body = request.toJson();
+      final response = await post('/GPT/UseChatGPT', body);
+      var result = "";
+      if (response.statusCode == 401) {
+        result = "401";
+      } else if (response.statusCode == 500) {
+        result = "500";
+      } else if (response.body != null) {
+        result = response.body;
+      }
+
+      return result;
     } catch (e) {
       rethrow;
     }

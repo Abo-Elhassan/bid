@@ -10,8 +10,10 @@ import 'package:new_version/new_version.dart';
 class LandingController extends GetxController {
   @override
   void onInit() async {
-    final newVersion = NewVersion();
-    newVersion.showAlertIfNecessary(context: Get.context!);
+    // final newVersion =
+    //     NewVersion(androidId: "com.dpw.bid", iOSId: "com.dpw.bid");
+    // final versionStatus = await newVersion.showAlertIfNecessary(context: Get.context!);
+
     super.onInit();
   }
 }
