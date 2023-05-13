@@ -3,7 +3,6 @@ import 'package:bid_app/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
-import 'package:new_version/new_version.dart';
 
 import '../controllers/landing_controller.dart';
 
