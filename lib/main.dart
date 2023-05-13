@@ -6,9 +6,7 @@ import 'package:bid_app/theme/app_theme.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'package:get_storage/get_storage.dart';
-import 'package:new_version/new_version.dart';
 
 late ByteData certificate;
 
